@@ -31,7 +31,7 @@ This is where Instantiator comes in: it creates such instances for you.
 ```kotlin
 @Test
 fun someTest(){
-    val person : Person = instance() // instance() is Instantiator's API.  
+    val person : Person = instance() // instance() is Instantiator's API. It creates a new instance of Person with random values. 
 
     // Now that you have some random Person object 
     // you can do with it whatever you want
