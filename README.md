@@ -58,7 +58,15 @@ Type | Support | Note and default behavior description
 `interface` | ❌️ | Not supported out of the box because by using reflections there is no straight forward way (apart from class path scanning which is not implemented at the moment) to find out which class implements an interface.
 `abstract class`| ❌️ | same reason as for interface (see above).
 `enum` | ✅️ | fully supported. It randomly picks one case and returns it.
-
+`Int`  | ✅️ | random number is returned
+`Long`  | ✅️ | random number is returned
+`Float`  | ✅️ | random number is returned
+`Double`  | ✅️ | random number is returned
+`Short`  | ✅️ | random number is returned
+`String`  | ✅️ | random string with default length of 10 characters is returned. Pool of chars that is used to compute random string is `a..z` + `A..Z` + `0..9`.
+`Char`  | ✅️ | random char is returned from the following pool of chars: `a..z` + `A..Z` + `0..9`.
+`Boolean`  | ✅️ | randomly returns true or false
+`Byte` | ✅️ | randomly creates a `0` or `1` byte and returns it
 
 
 
