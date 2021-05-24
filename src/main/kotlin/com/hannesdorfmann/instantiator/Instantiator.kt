@@ -65,27 +65,45 @@ internal class Instantiator(config: InstantiatorConfig) {
             }
         }
 
-        return fromInstanceFactoryIfAvailbaleOtherwise(type) {
-            // classes with empty constructor
-            val primaryConstructor = clazz.primaryConstructor ?: throw UnsupportedOperationException(
-                "Can not instantiate an instance of ${clazz} without a primary constructor"
+        if (clazz.isSealed) {
+            // TODO random? Make it somehow configurable
+            val subclasses = clazz.sealedSubclasses
+            if (subclasses.isEmpty()) {
+                throw UnsupportedOperationException("Sealed classes without any concrete implementation is not supported. Therefore, cannot instantiate $clazz")
+            }
+            return createInstance(subclasses[Random.nextInt(subclasses.size)])
+        }
+
+        if (!clazz.isAbstract) {
+            return fromInstanceFactoryIfAvailbaleOtherwise(type) {
+                // classes with empty constructor
+                val primaryConstructor = clazz.primaryConstructor ?: throw UnsupportedOperationException(
+                    "Can not instantiate an instance of ${clazz} without a primary constructor"
+                )
+
+                val primaryConstructorParameters: Map<KParameter, Any?> =
+                    primaryConstructor.parameters.associate { parameter ->
+                        parameter to createInstance(parameter.type)
+                    }
+
+                if (primaryConstructorParameters.isEmpty()) {
+                    primaryConstructor.call()
+                } else {
+                    primaryConstructor.callBy(primaryConstructorParameters)
+                }
+            }
+        } else {
+            throw UnsupportedOperationException(
+                "Instantiating an abstract class or interface is not supported. " +
+                        "Therefore, cannot instantiate instance of $clazz"
             )
 
-            val primaryConstructorParameters: Map<KParameter, Any?> =
-                primaryConstructor.parameters.associate { parameter ->
-                    parameter to createInstance(parameter.type)
-                }
-
-            if (primaryConstructorParameters.isEmpty()) {
-                primaryConstructor.call()
-            } else {
-                primaryConstructor.callBy(primaryConstructorParameters)
-            }
         }
     }
 }
 
-inline fun <reified T : Any> instance(config: InstantiatorConfig = InstantiatorConfig()): T = T::class.instance(config)
+inline fun <reified T : Any> instance(config: InstantiatorConfig = InstantiatorConfig()): T =
+    T::class.instance(config)
 
 fun <T : Any> KClass<T>.instance(config: InstantiatorConfig = InstantiatorConfig()): T =
     Instantiator(config).createInstance(this)

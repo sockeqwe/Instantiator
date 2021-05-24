@@ -16,6 +16,11 @@ class ClassTest {
         println(x)
     }
 
+    @Test
+    fun `class with constructor that takes another class is generated`() {
+        val x: WrappedClass = instance()
+        println(x)
+    }
 
     data class SomeClass(
         val i: Int,
@@ -30,4 +35,7 @@ class ClassTest {
     )
 
     class EmptyConstructorClass
+
+    data class WrappedClass(val i: Int, val someClass: SomeClass)
+
 }
