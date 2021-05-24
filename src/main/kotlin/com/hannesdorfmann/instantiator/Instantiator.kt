@@ -4,6 +4,7 @@ import kotlin.random.Random
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
+import kotlin.reflect.KVisibility
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
@@ -80,6 +81,20 @@ internal class Instantiator(config: InstantiatorConfig) {
                 val primaryConstructor = clazz.primaryConstructor ?: throw UnsupportedOperationException(
                     "Can not instantiate an instance of ${clazz} without a primary constructor"
                 )
+
+                if (primaryConstructor.visibility == KVisibility.PRIVATE) {
+                    throw UnsupportedOperationException(
+                        "Cannot create an instance of $clazz because primary " +
+                                "constructor has private visibility. Constructor must be public."
+                    )
+                }
+
+                if (primaryConstructor.visibility == KVisibility.PROTECTED) {
+                    throw UnsupportedOperationException(
+                        "Cannot create an instance of $clazz because primary " +
+                                "constructor has protected visibility. Constructor must be public."
+                    )
+                }
 
                 val primaryConstructorParameters: Map<KParameter, Any?> =
                     primaryConstructor.parameters.associate { parameter ->
