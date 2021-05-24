@@ -4,6 +4,9 @@ Tired of manually setup test data of Kotlin data classes or POJOs? Instantiator 
 This is not a mocking library. 
 When talking about Instantiator can create an instance of any class for you, I'm referring on data class or POJOs, not mock functionality.
 
+It doesn't use any black magic. 
+It uses reflection and invokes primary (public) constructors. 
+If there is no public primary constructor available, then Instantiator cannot instantiate it.
 
 ## Usage
 Assuming you have some data structures like this
@@ -46,13 +49,16 @@ fun someTest(){
 
 
 ## Supported use cases
-Supported Type | Support | Note and default behavior description
+Type | Support | Note and default behavior description
 --- | --- | ---
 `data class` | ✅️ | invokes primary constructor and fills parameter with random values. This works incl. other types: i.e. `data class Foo( id : Int, bar : Bar)`. Instantiator will also instantiate a `Bar` instance to eventually instantiate `Foo`
 `class` | ✅️ | works the same as `data class`.
 `sealed class` | ✅ | randomly creates an instance by randomly picking a subclass of the sealed class hierarchy and then instantiates this one (meaning what is written in the rows above about support for `data class` or `class` still holds).
+`object` | ✅ | Objects / Singleton are supported and it will return exactly that one object instance that already exists (not instantiate via generics another instance of the same object so having 2 with different memory address).
 `interface` | ❌️ | Not supported out of the box because by using reflections there is no straight forward way (apart from class path scanning which is not implemented at the moment) to find out which class implements an interface.
 `abstract class`| ❌️ | same reason as for interface (see above).
+`enum` | ✅️ | fully supported. It randomly picks up one case and returns it.
+
 
 
 
