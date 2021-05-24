@@ -11,7 +11,7 @@ import kotlin.reflect.jvm.jvmName
 internal typealias InstanceFactory<T> = () -> T
 
 private val wildcardListType = List::class.createType(arguments = listOf(KTypeProjection.STAR))
-private val wildcardMutableListType = MutableList::class.createType(arguments = listOf(KTypeProjection.STAR))
+private val wildcardSetType = Set::class.createType(arguments = listOf(KTypeProjection.STAR))
 
 
 internal class Instantiator(config: InstantiatorConfig) {
@@ -19,7 +19,11 @@ internal class Instantiator(config: InstantiatorConfig) {
     private val instanceFactory: MutableMap<KType, InstanceFactory<Any?>> = config.instanceFactory
 
     private fun fillList(genericsType : KType) : List<Any> {
-        return (1..10).map { createInstance(genericsType) as Any }
+        return (1..10).map { createInstance(genericsType) as Any }.toMutableList()
+    }
+
+    private fun fillSet(genericsType: KType) : Set<Any>{
+        return (1..10).map { createInstance(genericsType) as Any }.toMutableSet()
     }
 
     private fun <T : Any> createInstance(type: KType): T {
@@ -29,8 +33,8 @@ internal class Instantiator(config: InstantiatorConfig) {
             // Dealing with special cases such as collections
             val valueType = type.arguments[0].type!!
             when {
-                type.isSubtypeOf(wildcardMutableListType) -> return fillList(valueType).toMutableList() as T
                 type.isSubtypeOf(wildcardListType) -> return fillList(valueType) as T
+                type.isSubtypeOf(wildcardSetType) -> return fillSet(valueType) as T
             }
         }
 

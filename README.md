@@ -59,6 +59,7 @@ Type | Support | Note and default behavior description
 `abstract class`| ❌️ | same reason as for interface (see above).
 `enum` | ✅️ | fully supported. It randomly picks one case and returns it. 
 `List` | ✅️ | `List` and `MutableList` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : List<Person>)` 
+`Set` | ✅️ | `Set` and `MutableSet` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Set<Person>)` 
 `Int`  | ✅️ | random number is returned
 `Long`  | ✅️ | random number is returned
 `Float`  | ✅️ | random number is returned
@@ -67,7 +68,7 @@ Type | Support | Note and default behavior description
 `String`  | ✅️ | random string with default length of 10 characters is returned. Pool of chars that is used to compute random string is `a..z` + `A..Z` + `0..9`.
 `Char`  | ✅️ | random char is returned from the following pool of chars: `a..z` + `A..Z` + `0..9`.
 `Boolean`  | ✅️ | randomly returns true or false
-`Byte` | ✅️ | randomly creates a `0` or `1` byte and returns it
+`Byte` | ✅️ | randomly creates one byte and returns it
 
 
 
