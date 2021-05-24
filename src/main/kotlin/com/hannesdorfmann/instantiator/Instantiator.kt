@@ -11,6 +11,7 @@ import kotlin.reflect.jvm.jvmName
 internal typealias InstanceFactory<T> = () -> T
 
 private val wildcardListType = List::class.createType(arguments = listOf(KTypeProjection.STAR))
+private val wildcardCollectionType = Collection::class.createType(arguments = listOf(KTypeProjection.STAR))
 private val wildcardSetType = Set::class.createType(arguments = listOf(KTypeProjection.STAR))
 
 
@@ -35,6 +36,7 @@ internal class Instantiator(config: InstantiatorConfig) {
             when {
                 type.isSubtypeOf(wildcardListType) -> return fillList(valueType) as T
                 type.isSubtypeOf(wildcardSetType) -> return fillSet(valueType) as T
+                type.isSubtypeOf(wildcardCollectionType) -> return fillList(valueType) as T
             }
         }
 

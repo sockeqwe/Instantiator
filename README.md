@@ -58,8 +58,9 @@ Type | Support | Note and default behavior description
 `interface` | ❌️ | Not supported out of the box because by using reflections there is no straight forward way (apart from class path scanning which is not implemented at the moment) to find out which class implements an interface.
 `abstract class`| ❌️ | same reason as for interface (see above).
 `enum` | ✅️ | fully supported. It randomly picks one case and returns it. 
-`List` | ✅️ | `List` and `MutableList` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : List<Person>)` 
+`List` | ✅️ | `List` and `MutableList` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : List<Person>)`.
 `Set` | ✅️ | `Set` and `MutableSet` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Set<Person>)` 
+`Collection` | ✅️ | `Collection` and `MutableCollection` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Collection<Person>)` 
 `Int`  | ✅️ | random number is returned
 `Long`  | ✅️ | random number is returned
 `Float`  | ✅️ | random number is returned
