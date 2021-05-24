@@ -46,11 +46,11 @@ fun someTest(){
 
 
 ## Supported use cases
-Supported Type | Suppored | Note and default behavior description
+Supported Type | Support | Note and default behavior description
 --- | --- | ---
 `data class` | ✅️ | invokes primary constructor and fills parameter with random values. This works incl. other types: i.e. `data class Foo( id : Int, bar : Bar)`. Instantiator will also instantiate a `Bar` instance to eventually instantiate `Foo`
 `class` | ✅️ | works the same as `data class`.
-`sealed class` | ✅ | Instantiator will randomly create an instance of a randomly picked subclass of the sealed class hierarchy and then instantiates is (meaning what is written in the rows above about support for `data class` or `class` still holds).
+`sealed class` | ✅ | randomly creates an instance by randomly picking a subclass of the sealed class hierarchy and then instantiates this one (meaning what is written in the rows above about support for `data class` or `class` still holds).
 `interface` | ❌️ | Not supported out of the box because by using reflections there is no straight forward way (apart from class path scanning which is not implemented at the moment) to find out which class implements an interface.
 `abstract class`| ❌️ | same reason as for interface (see above).
 
