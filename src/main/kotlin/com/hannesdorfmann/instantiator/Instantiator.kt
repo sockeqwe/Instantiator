@@ -1,35 +1,40 @@
 package com.hannesdorfmann.instantiator
 
 import kotlin.random.Random
-import kotlin.reflect.KClass
-import kotlin.reflect.KParameter
-import kotlin.reflect.KType
-import kotlin.reflect.KVisibility
+import kotlin.reflect.*
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmName
 
-private typealias InstanceFactory<T> = () -> T
+internal typealias InstanceFactory<T> = () -> T
+
+private val wildcardListType = List::class.createType(arguments = listOf(KTypeProjection.STAR))
+private val wildcardMutableListType = MutableList::class.createType(arguments = listOf(KTypeProjection.STAR))
+
 
 internal class Instantiator(config: InstantiatorConfig) {
 
-    private val instanceFactory: MutableMap<KType, InstanceFactory<Any?>> = mutableMapOf()
+    private val instanceFactory: MutableMap<KType, InstanceFactory<Any?>> = config.instanceFactory
 
-    init {
-        instanceFactory[Int::class.createType()] = config.intGenerator
-        instanceFactory[Float::class.createType()] = config.floatGenerator
-        instanceFactory[Double::class.createType()] = config.doubleGenerator
-        instanceFactory[String::class.createType()] = config.stringGenerator
-        instanceFactory[Char::class.createType()] = config.charGenerator
-        instanceFactory[Boolean::class.createType()] = config.booleanGenerator
-        instanceFactory[Long::class.createType()] = config.longGenerator
-        instanceFactory[Short::class.createType()] = config.shortGenerator
-        instanceFactory[Byte::class.createType()] = config.byteGenerator
+    private fun fillList(genericsType : KType) : List<Any> {
+        return (1..10).map { createInstance(genericsType) as Any }
     }
 
-
     private fun <T : Any> createInstance(type: KType): T {
+
+        // Types with Generics
+        if (type.arguments.size == 1) {
+            // Dealing with special cases such as collections
+            val valueType = type.arguments[0].type!!
+            when {
+                type.isSubtypeOf(wildcardMutableListType) -> return fillList(valueType).toMutableList() as T
+                type.isSubtypeOf(wildcardListType) -> return fillList(valueType) as T
+            }
+        }
+
+
         return fromInstanceFactoryIfAvailbaleOtherwise(type) {
             val classifier = type.classifier
             if (type.classifier != null && classifier is KClass<*>) {

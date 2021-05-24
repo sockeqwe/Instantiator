@@ -2,19 +2,42 @@ package com.hannesdorfmann.instantiator
 
 import kotlin.experimental.and
 import kotlin.random.Random
+import kotlin.reflect.KType
+import kotlin.reflect.full.createType
 
-data class InstantiatorConfig(
-    val intGenerator: () -> Int = ::defaultIntGenerator,
-    val stringGenerator: () -> String = ::defaultStringGenerator,
-    val charGenerator: () -> Char = ::defaultCharGenerator,
-    val booleanGenerator: () -> Boolean = ::defaultBooleanGenerator,
-    val doubleGenerator: () -> Double = ::defaultDoubleGenerator,
-    val floatGenerator: () -> Float = ::defaultFloatGenerator,
-    val longGenerator: () -> Long = ::defaultLongGenerator,
-    val shortGenerator: () -> Short = ::defaultShortGenerator,
-    val byteGenerator: () -> Byte = ::defaultByteGenerator,
+
+class InstantiatorConfig(
+    vararg factories: Pair<KType, InstanceFactory<Any>> = arrayOf(
+        Int::class.createType() to ::defaultIntGenerator,
+        Float::class.createType() to ::defaultFloatGenerator,
+        Double::class.createType() to ::defaultDoubleGenerator,
+        String::class.createType() to ::defaultStringGenerator,
+        Char::class.createType() to ::defaultCharGenerator,
+        Boolean::class.createType() to ::defaultBooleanGenerator,
+        Long::class.createType() to ::defaultLongGenerator,
+        Short::class.createType() to ::defaultShortGenerator,
+        Byte::class.createType() to ::defaultByteGenerator
+    )
 ) {
 
+    internal val instanceFactory: MutableMap<KType, InstanceFactory<Any?>> = mutableMapOf()
+
+    init {
+        /*
+        registerFactory(::defaultIntGenerator)
+        registerFactory(::defaultFloatGenerator)
+        registerFactory(::defaultDoubleGenerator)
+        registerFactory(::defaultStringGenerator)
+        registerFactory(::defaultCharGenerator)
+        registerFactory(::defaultBooleanGenerator)
+        registerFactory(::defaultLongGenerator)
+        registerFactory(::defaultShortGenerator)
+        registerFactory(::defaultByteGenerator)
+
+         */
+
+        instanceFactory.putAll(factories)
+    }
 }
 
 
