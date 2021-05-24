@@ -13,18 +13,24 @@ internal typealias InstanceFactory<T> = () -> T
 private val wildcardListType = List::class.createType(arguments = listOf(KTypeProjection.STAR))
 private val wildcardCollectionType = Collection::class.createType(arguments = listOf(KTypeProjection.STAR))
 private val wildcardSetType = Set::class.createType(arguments = listOf(KTypeProjection.STAR))
+private val wildcardMapType = Map::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR))
 
 
 internal class Instantiator(config: InstantiatorConfig) {
 
     private val instanceFactory: MutableMap<KType, InstanceFactory<Any?>> = config.instanceFactory
 
-    private fun fillList(genericsType : KType) : List<Any> {
+    private fun fillList(genericsType: KType): List<Any> {
         return (1..10).map { createInstance(genericsType) as Any }.toMutableList()
     }
 
-    private fun fillSet(genericsType: KType) : Set<Any>{
+    private fun fillSet(genericsType: KType): Set<Any> {
         return (1..10).map { createInstance(genericsType) as Any }.toMutableSet()
+    }
+
+    private fun fillMap(keyGenericsType: KType, valueGenericsType: KType): Map<Any, Any> {
+        return (1..10).associate { createInstance(keyGenericsType) as Any to createInstance(valueGenericsType) as Any }
+            .toMutableMap()
     }
 
     private fun <T : Any> createInstance(type: KType): T {
@@ -32,11 +38,18 @@ internal class Instantiator(config: InstantiatorConfig) {
         // Types with Generics
         if (type.arguments.size == 1) {
             // Dealing with special cases such as collections
-            val valueType = type.arguments[0].type!!
+            val genericsType = type.arguments[0].type!!
             when {
-                type.isSubtypeOf(wildcardListType) -> return fillList(valueType) as T
-                type.isSubtypeOf(wildcardSetType) -> return fillSet(valueType) as T
-                type.isSubtypeOf(wildcardCollectionType) -> return fillList(valueType) as T
+                type.isSubtypeOf(wildcardListType) -> return fillList(genericsType) as T
+                type.isSubtypeOf(wildcardSetType) -> return fillSet(genericsType) as T
+                type.isSubtypeOf(wildcardCollectionType) -> return fillList(genericsType) as T
+            }
+        } else if (type.arguments.size == 2) {
+            val genericsType1 = type.arguments[0].type!!
+            val genericsType2 = type.arguments[1].type!!
+
+            when {
+                type.isSubtypeOf(wildcardMapType) -> return fillMap(genericsType1, genericsType2) as T
             }
         }
 

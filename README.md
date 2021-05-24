@@ -60,6 +60,7 @@ Type | Support | Note and default behavior description
 `enum` | ✅️ | fully supported. It randomly picks one case and returns it. 
 `List` | ✅️ | `List` and `MutableList` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : List<Person>)`.
 `Set` | ✅️ | `Set` and `MutableSet` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Set<Person>)` 
+`Map` | ✅️ | `Map` and `MutableMap` are supported in class constructors. i.e. in instance of PhoneBook can be instantiated: `data class PhoneBook(val phoneNumbers : Map<Person, PhoneNumber>)` 
 `Collection` | ✅️ | `Collection` and `MutableCollection` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Collection<Person>)` 
 `Int`  | ✅️ | random number is returned
 `Long`  | ✅️ | random number is returned
