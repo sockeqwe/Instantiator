@@ -96,8 +96,8 @@ class Instantiator(config: InstantiatorConfig) {
                 "Could not create instance of $clazz. " +
                         "This is typically the case if you want to create an instance of a class that has generics. " +
                         "In that case you need to specify a concrete factory how to create such an instance " +
-                        "in the ${InstantiatorConfig::class.simpleName}."
-            , t)
+                        "in the ${InstantiatorConfig::class.simpleName}.", t
+            )
         }
         if (clazz.isSubclassOf(Enum::class)) {
             return fromInstanceFactoryIfAvailbaleOtherwise(type) {
@@ -160,3 +160,45 @@ class Instantiator(config: InstantiatorConfig) {
 @OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T : Any> instance(config: InstantiatorConfig = InstantiatorConfig()): T =
     Instantiator(config).createInstance(typeOf<T>())
+
+inline fun <reified T : Any, F : T> instantiateSealedSubclasses(
+    config: InstantiatorConfig = InstantiatorConfig()
+): List<T> {
+    if (T::class.isSealed) {
+        val subclasses = T::class.sealedSubclasses
+        if (subclasses.isEmpty()) {
+            throw RuntimeException(
+                "${T::class} is a sealed class or sealed interface but has no implementations " +
+                        "of it. Therefore I cannot create a list of instances of the subsclasses"
+            )
+        } else {
+            val instantiator = Instantiator(config)
+
+            // This is some ugly workaround to overcome limitations of recursive calls in inline functions.
+            // Don't try this at home kids ;)
+
+            var createSealedSubclassesList: ((sealedClassRoot: KClass<out T>) -> List<T>)? = null
+            createSealedSubclassesList = { sealedClassRoot ->
+                sealedClassRoot.sealedSubclasses
+                    .flatMap {
+                        if (it.isSealed) {
+                            if (it.sealedSubclasses.isEmpty()) {
+                                emptyList()
+                            } else {
+                                createSealedSubclassesList!!(it)
+                            }
+                        } else {
+                            listOf(instantiator.createInstance(it.createType()))
+                        }
+                    }
+            }
+
+            return createSealedSubclassesList(T::class)
+        }
+    } else {
+        throw RuntimeException(
+            "${T::class} is not a sealed class or sealed interface. " +
+                    "If you want to just get an instance call instance() only."
+        )
+    }
+}
