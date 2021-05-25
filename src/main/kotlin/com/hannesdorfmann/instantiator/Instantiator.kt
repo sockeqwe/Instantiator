@@ -16,7 +16,7 @@ private val wildcardSetType = Set::class.createType(arguments = listOf(KTypeProj
 private val wildcardMapType = Map::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR))
 
 
-internal class Instantiator(config: InstantiatorConfig) {
+class Instantiator(config: InstantiatorConfig) {
 
     private val instanceFactory: MutableMap<KType, InstanceFactory<Any?>> = config.instanceFactory
 
@@ -33,7 +33,7 @@ internal class Instantiator(config: InstantiatorConfig) {
             .toMutableMap()
     }
 
-    private fun <T : Any> createInstance(type: KType): T {
+    fun <T : Any> createInstance(type: KType): T {
 
         // Types with Generics
         if (type.arguments.size == 1) {
@@ -141,8 +141,6 @@ internal class Instantiator(config: InstantiatorConfig) {
     }
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T : Any> instance(config: InstantiatorConfig = InstantiatorConfig()): T =
-    T::class.instance(config)
-
-fun <T : Any> KClass<T>.instance(config: InstantiatorConfig = InstantiatorConfig()): T =
-    Instantiator(config).createInstance(this)
+    Instantiator(config).createInstance(typeOf<T>())

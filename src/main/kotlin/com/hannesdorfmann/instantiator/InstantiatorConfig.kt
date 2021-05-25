@@ -23,19 +23,6 @@ class InstantiatorConfig(
     internal val instanceFactory: MutableMap<KType, InstanceFactory<Any?>> = mutableMapOf()
 
     init {
-        /*
-        registerFactory(::defaultIntGenerator)
-        registerFactory(::defaultFloatGenerator)
-        registerFactory(::defaultDoubleGenerator)
-        registerFactory(::defaultStringGenerator)
-        registerFactory(::defaultCharGenerator)
-        registerFactory(::defaultBooleanGenerator)
-        registerFactory(::defaultLongGenerator)
-        registerFactory(::defaultShortGenerator)
-        registerFactory(::defaultByteGenerator)
-
-         */
-
         instanceFactory.putAll(factories)
     }
 }

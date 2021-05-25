@@ -58,10 +58,10 @@ Type | Support | Note and default behavior description
 `interface` | ❌️ | Not supported out of the box because by using reflections there is no straight forward way (apart from class path scanning which is not implemented at the moment) to find out which class implements an interface.
 `abstract class`| ❌️ | same reason as for interface (see above).
 `enum` | ✅️ | fully supported. It randomly picks one case and returns it. 
-`List` | ✅️ | `List` and `MutableList` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : List<Person>)`.
-`Set` | ✅️ | `Set` and `MutableSet` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Set<Person>)` 
-`Map` | ✅️ | `Map` and `MutableMap` are supported in class constructors. i.e. in instance of PhoneBook can be instantiated: `data class PhoneBook(val phoneNumbers : Map<Person, PhoneNumber>)` 
-`Collection` | ✅️ | `Collection` and `MutableCollection` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Collection<Person>)` 
+`List` | ✅️ | `List` and `MutableList` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : List<Person>)`  but you can also directly request an instance with `val persons : List<Person> = instance()`.
+`Set` | ✅️ | `Set` and `MutableSet` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Set<Person>)` but you can also directly request an instance with `val persons : Set<Person> = instance()`
+`Map` | ✅️ | `Map` and `MutableMap` are supported in class constructors. i.e. in instance of PhoneBook can be instantiated: `data class PhoneBook(val phoneNumbers : Map<Person, PhoneNumber>)` but you can also directly request an instance with `val phoneBook : Map<Person, PhoneNumber>> = instance()`
+`Collection` | ✅️ | `Collection` and `MutableCollection` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Collection<Person>)`  but you can also directly request an instance with `val persons : Collection<Person>> = instance()`
 `Int`  | ✅️ | random number is returned
 `Long`  | ✅️ | random number is returned
 `Float`  | ✅️ | random number is returned

@@ -5,7 +5,6 @@ import org.junit.Test
 
 class ListTest {
 
-
     @Test
     @Ignore
     fun `list of primitives are generated`(){
@@ -22,6 +21,32 @@ class ListTest {
     @Test
     fun `mutablelist as constructor parameter is supported`(){
         val x : ClassWithMutableListParam = instance()
+        println(x)
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    @Test
+    fun `generate list of primitives directly as a return type`(){
+        println(instance<List<Int>>())
+        println(instance<List<Long>>())
+        println(instance<List<String>>())
+        println(instance<List<Double>>())
+        println(instance<List<Char>>())
+        println(instance<List<Float>>())
+        println(instance<List<Byte>>())
+        println(instance<List<Boolean>>())
+        println(instance<List<Short>>())
+    }
+
+    @Test
+    fun `generated list of class directly as a return type`(){
+        val x : List<Item> = instance()
+        println(x)
+    }
+
+    @Test
+    fun `generated mutablelist of class directly as a return type`(){
+        val x : MutableList<Item> = instance()
         println(x)
     }
 
