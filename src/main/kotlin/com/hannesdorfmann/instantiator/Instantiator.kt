@@ -97,7 +97,7 @@ class Instantiator(config: InstantiatorConfig) {
                         "This is typically the case if you want to create an instance of a class that has generics. " +
                         "In that case you need to specify a concrete factory how to create such an instance " +
                         "in the ${InstantiatorConfig::class.simpleName}."
-            )
+            , t)
         }
         if (clazz.isSubclassOf(Enum::class)) {
             return fromInstanceFactoryIfAvailbaleOtherwise(type) {
