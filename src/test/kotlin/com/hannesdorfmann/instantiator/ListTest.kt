@@ -1,16 +1,8 @@
 package com.hannesdorfmann.instantiator
 
-import org.junit.Ignore
 import org.junit.Test
 
 class ListTest {
-
-    @Test
-    @Ignore
-    fun `list of primitives are generated`(){
-        val x : List<Int> = instance()
-        println(x)
-    }
 
     @Test
     fun `list as constructor parameter is supported`(){

@@ -59,7 +59,12 @@ class Instantiator(config: InstantiatorConfig) {
             if (type.classifier != null && classifier is KClass<*>) {
                 createInstance(type.classifier as KClass<T>)
             } else {
-                throw RuntimeException("Could not construct instance of $type")
+                throw RuntimeException(
+                    "Could not create instance of $type. " +
+                            "This is typically the case if you want to create an instance of a class that has generics. " +
+                            "In that case you need to specify a concrete factory how to create such an instance " +
+                            "in the ${InstantiatorConfig::class.simpleName}."
+                )
             }
         }
     }
@@ -74,7 +79,7 @@ class Instantiator(config: InstantiatorConfig) {
         }
     }
 
-    internal fun <T : Any> createInstance(clazz: KClass<T>): T {
+    private fun <T : Any> createInstance(clazz: KClass<T>): T {
 
         // Singleton objects
         val singletonObject = clazz.objectInstance
@@ -82,7 +87,18 @@ class Instantiator(config: InstantiatorConfig) {
             return singletonObject
         }
 
-        val type = clazz.createType()
+
+        val type = try {
+            clazz.createType()
+        } catch (t: IllegalArgumentException) {
+            // A class with generics, so it didnt work
+            throw RuntimeException(
+                "Could not create instance of $clazz. " +
+                        "This is typically the case if you want to create an instance of a class that has generics. " +
+                        "In that case you need to specify a concrete factory how to create such an instance " +
+                        "in the ${InstantiatorConfig::class.simpleName}."
+            )
+        }
         if (clazz.isSubclassOf(Enum::class)) {
             return fromInstanceFactoryIfAvailbaleOtherwise(type) {
                 val enumConstants = Class.forName(clazz.jvmName).enumConstants
