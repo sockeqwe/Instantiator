@@ -75,6 +75,7 @@ Type | Support | Note and default behavior description
 `data class` | ✅️ | invokes primary constructor and fills parameter with random values. This works incl. other types: i.e. `data class Foo( id : Int, bar : Bar)`. Instantiator will also instantiate a `Bar` instance to eventually instantiate `Foo`
 `class` | ✅️ | works the same as `data class`.
 `sealed class` | ✅ | randomly creates an instance by randomly picking a subclass of the sealed class hierarchy and then instantiates this one (meaning what is written in the rows above about support for `data class` or `class` still holds). Additionally, if you want to have a full list of instances of all subclasses of a sealed class hierarchy use `val subclassesInstances : List<SomeSealedClass> = instantiateSealedSubclasses()`.
+`sealed interface` | ✅ | works exactly the same way as `sealed class` (see above).
 `object` | ✅ | Objects / Singleton are supported and it will return exactly that one object instance that already exists (not instantiate via generics another instance of the same object so having 2 with different memory address).
 `interface` | ❌️ | Not supported out of the box because by using reflections there is no straight forward way (apart from class path scanning which is not implemented at the moment) to find out which class implements an interface.
 `abstract class`| ❌️ | same reason as for interface (see above).
