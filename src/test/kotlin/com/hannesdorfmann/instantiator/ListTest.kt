@@ -1,6 +1,7 @@
 package com.hannesdorfmann.instantiator
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
+
 
 class ListTest {
 
@@ -16,7 +17,6 @@ class ListTest {
         println(x)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun `generate list of primitives directly as a return type`(){
         println(instance<List<Int>>())

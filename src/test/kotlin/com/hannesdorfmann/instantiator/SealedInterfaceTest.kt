@@ -1,7 +1,9 @@
 package com.hannesdorfmann.instantiator
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.fail
 
 class SealedInterfaceTest {
 
@@ -15,48 +17,48 @@ class SealedInterfaceTest {
     fun `sealed interface without subclass cannot be instantiated and throws exception`() {
         try {
             val x: SealedInterfaceWithoutSubClasses = instance()
-            Assert.fail("Exception expected but has not been thrown. Returned $x")
+            fail("Exception expected but has not been thrown. Returned $x")
         } catch (e: UnsupportedOperationException) {
             val expected = "Sealed classes without any concrete implementation is not supported. " +
                     "Therefore, cannot instantiate ${SealedInterfaceWithoutSubClasses::class}"
-            Assert.assertEquals(expected, e.message)
+            assertEquals(expected, e.message)
         }
     }
 
     @Test
     fun `instantiateSealedSubclasses() works`() {
         val subclasses: List<SealedInterface> = instantiateSealedSubclasses()
-        Assert.assertEquals(2, subclasses.size)
-        Assert.assertTrue(subclasses[0] is SealedInterfaceImpl1)
-        Assert.assertTrue(subclasses[1] is SealedInterfaceImpl2)
+        assertEquals(2, subclasses.size)
+        assertTrue(subclasses[0] is SealedInterfaceImpl1)
+        assertTrue(subclasses[1] is SealedInterfaceImpl2)
     }
 
     @Test
     fun `call instantiateSealedSubclasses() on a sealed interface without implementations throws exception`() {
         try {
             val subclasses: List<SealedInterfaceWithoutSubClasses> = instantiateSealedSubclasses()
-            Assert.fail("Exception is expected but has not been thrown. Result was $subclasses")
+            fail("Exception is expected but has not been thrown. Result was $subclasses")
         } catch (e: RuntimeException) {
             val expected =
                 "${SealedInterfaceWithoutSubClasses::class} is a sealed class or sealed interface but has no implementations of it. " +
                         "Therefore I cannot create a list of instances of the subsclasses"
-            Assert.assertEquals(expected, e.message)
+            assertEquals(expected, e.message)
         }
     }
 
     @Test
     fun `nested sealed classes are supported by instantiateSealedSubclasses()`(){
         val list : List<RootSealedInterface> = instantiateSealedSubclasses()
-        Assert.assertEquals(3, list.size)
-        Assert.assertTrue(list[0] == RootSealedClassImpl1)
-        Assert.assertTrue(list[1] is NestedRootSealedInterfaceImpl1)
-        Assert.assertTrue(list[2] is NestedRootSealedInterfaceImpl2)
+        assertEquals(3, list.size)
+        assertTrue(list[0] == RootSealedClassImpl1)
+        assertTrue(list[1] is NestedRootSealedInterfaceImpl1)
+        assertTrue(list[2] is NestedRootSealedInterfaceImpl2)
     }
 
     @Test
     fun `nested sealed class with no implementation returns empty list`(){
         val list : List<AnotherRootSealedInterface> = instantiateSealedSubclasses()
-        Assert.assertTrue(list.isEmpty())
+        assertTrue(list.isEmpty())
     }
 
 

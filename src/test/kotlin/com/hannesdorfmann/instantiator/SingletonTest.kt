@@ -1,15 +1,16 @@
 package com.hannesdorfmann.instantiator
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+
 
 class SingletonTest {
 
     object SomeSingleton
 
     @Test
-    fun `singleton instance is not instantiated`(){
+    fun `singleton instance is not re-instantiated`(){
         val x : SomeSingleton = instance()
-        Assert.assertTrue(x === SomeSingleton)
+        assertTrue(x === SomeSingleton)
     }
 }
