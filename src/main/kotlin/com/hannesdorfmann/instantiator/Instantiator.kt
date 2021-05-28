@@ -16,7 +16,7 @@ private val wildcardSetType = Set::class.createType(arguments = listOf(KTypeProj
 private val wildcardMapType = Map::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR))
 
 
-class Instantiator(config: InstantiatorConfig) {
+class Instantiator(private val config: InstantiatorConfig) {
 
     private val instanceFactory: MutableMap<KType, InstanceFactory<Any?>> = config.instanceFactory
 
@@ -137,9 +137,9 @@ class Instantiator(config: InstantiatorConfig) {
                 }
 
                 val primaryConstructorParameters: Map<KParameter, Any?> =
-                    primaryConstructor.parameters.associate { parameter ->
-                        parameter to createInstance(parameter.type)
-                    }
+                    primaryConstructor.parameters
+                        .filter { if (config.useDefaultArguments) !it.isOptional else true}
+                        .associateWith { parameter -> createInstance(parameter.type) }
 
                 if (primaryConstructorParameters.isEmpty()) {
                     primaryConstructor.call()
@@ -161,7 +161,7 @@ class Instantiator(config: InstantiatorConfig) {
 inline fun <reified T : Any> instance(config: InstantiatorConfig = InstantiatorConfig()): T =
     Instantiator(config).createInstance(typeOf<T>())
 
-inline fun <reified T : Any, F : T> instantiateSealedSubclasses(
+inline fun <reified T : Any> instantiateSealedSubclasses(
     config: InstantiatorConfig = InstantiatorConfig()
 ): List<T> {
     if (T::class.isSealed) {

@@ -7,6 +7,7 @@ import kotlin.reflect.full.createType
 
 
 class InstantiatorConfig(
+    val useDefaultArguments : Boolean = true,
     vararg factories: Pair<KType, InstanceFactory<Any>> = arrayOf(
         Int::class.createType() to ::defaultIntGenerator,
         Float::class.createType() to ::defaultFloatGenerator,

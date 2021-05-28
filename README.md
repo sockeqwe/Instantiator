@@ -95,5 +95,19 @@ Type | Support | Note and default behavior description
 `Byte` | ✅️ | randomly creates one byte and returns it
 
 
+## Configuration
+You can configure Instantiator by passing a `InstantiatorConfig` instance as parameter to `instance(config : InstantiatorConfig)` or `instantiateSealedSubclasses(config : InstantiatorConfig)`.
+
+Some settings that you can set:
+
+- `InstantiatorConfig.useDefaultArguments`: Set it to `true` if you want that the default arguments of 
+  constructor parameters are used if provided. 
+  For example, given `data class MyClass(val id : Int, val name : String = "Barbra")`, if `config.useDefaultArguments = true` 
+  then the parameter`name` of any Foo instance will be `name="Barbra"` and only `id` which has no default argument set 
+  will be filled with random value.
+  Default behavior of the default config is that `InstantiatorConfig.useDefaultArguments = true`.
+
+
+
 
 

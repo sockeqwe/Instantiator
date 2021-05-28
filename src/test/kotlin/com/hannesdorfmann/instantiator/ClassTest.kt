@@ -25,11 +25,11 @@ class ClassTest {
     }
 
     @Test
-    fun `class with private constructor cannot be instantiated`(){
+    fun `class with private constructor cannot be instantiated`() {
         try {
-            val x : ClassWithPrivateConstructor = instance()
+            val x: ClassWithPrivateConstructor = instance()
             fail("Exception expected but has not been thrown")
-        } catch (e : Throwable){
+        } catch (e: Throwable) {
             val expected = "Cannot create an instance of ${ClassWithPrivateConstructor::class} because " +
                     "primary constructor has private visibility. Constructor must be public."
             assertEquals(expected, e.message)
@@ -37,16 +37,17 @@ class ClassTest {
     }
 
     @Test
-    fun `class with protected constructor cannot be instantiated`(){
+    fun `class with protected constructor cannot be instantiated`() {
         try {
-            val x : ClassWithProtectedConstructor = instance()
+            val x: ClassWithProtectedConstructor = instance()
             fail("Exception expected but has not been thrown")
-        } catch (e : Throwable){
+        } catch (e: Throwable) {
             val expected = "Cannot create an instance of ${ClassWithProtectedConstructor::class} because " +
                     "primary constructor has protected visibility. Constructor must be public."
             assertEquals(expected, e.message)
         }
     }
+
 
     data class SomeClass(
         val i: Int,
@@ -64,7 +65,7 @@ class ClassTest {
 
     data class WrappedClass(val i: Int, val someClass: SomeClass)
 
-    class ClassWithPrivateConstructor private constructor (i : Int)
+    class ClassWithPrivateConstructor private constructor(i: Int)
 
-    open class ClassWithProtectedConstructor protected constructor(i : Int)
+    open class ClassWithProtectedConstructor protected constructor(i: Int)
 }
