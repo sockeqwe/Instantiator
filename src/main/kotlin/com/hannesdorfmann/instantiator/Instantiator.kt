@@ -8,17 +8,12 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmName
 
-internal typealias InstanceFactory<T> = () -> T
-
 private val wildcardListType = List::class.createType(arguments = listOf(KTypeProjection.STAR))
 private val wildcardCollectionType = Collection::class.createType(arguments = listOf(KTypeProjection.STAR))
 private val wildcardSetType = Set::class.createType(arguments = listOf(KTypeProjection.STAR))
 private val wildcardMapType = Map::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR))
 
-
 class Instantiator(private val config: InstantiatorConfig) {
-
-    private val instanceFactory: MutableMap<KType, InstanceFactory<Any?>> = config.instanceFactory
 
     private fun fillList(genericsType: KType): List<Any> {
         return (1..10).map { createInstance(genericsType) as Any }.toMutableList()
@@ -70,13 +65,9 @@ class Instantiator(private val config: InstantiatorConfig) {
     }
 
 
-    private fun <T> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T): T {
-        val factory: InstanceFactory<T>? = instanceFactory[type] as InstanceFactory<T>?
-        return if (factory != null) {
-            factory()
-        } else {
-            alternative()
-        }
+    private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T): T {
+        val factory: InstanceFactory<T>? = config.instanceFactory[type] as InstanceFactory<T>?
+        return factory?.createInstance() ?: alternative()
     }
 
     private fun <T : Any> createInstance(clazz: KClass<T>): T {
