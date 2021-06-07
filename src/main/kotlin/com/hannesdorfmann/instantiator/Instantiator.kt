@@ -67,7 +67,8 @@ class Instantiator(private val config: InstantiatorConfig) {
 
     private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T): T {
         val factory: InstanceFactory<T>? = config.instanceFactory[type] as InstanceFactory<T>?
-        return factory?.createInstance() ?: alternative()
+        val instance =  factory?.createInstance() ?: alternative()
+        return instance
     }
 
     private fun <T : Any> createInstance(clazz: KClass<T>): T {
@@ -130,7 +131,13 @@ class Instantiator(private val config: InstantiatorConfig) {
                 val primaryConstructorParameters: Map<KParameter, Any?> =
                     primaryConstructor.parameters
                         .filter { if (config.useDefaultArguments) !it.isOptional else true}
-                        .associateWith { parameter -> createInstance(parameter.type) }
+                        .associateWith { parameter ->
+                           val value =  if (config.useNull && parameter.type.isMarkedNullable)
+                                null
+                            else
+                                createInstance(parameter.type)
+                            value
+                        }
 
                 if (primaryConstructorParameters.isEmpty()) {
                     primaryConstructor.call()
