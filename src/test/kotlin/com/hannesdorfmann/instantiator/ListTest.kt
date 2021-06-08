@@ -28,6 +28,17 @@ class ListTest {
         println(instance<List<Byte>>())
         println(instance<List<Boolean>>())
         println(instance<List<Short>>())
+
+        // Test with Null values
+        println(instance<List<Int?>>())
+        println(instance<List<Long?>>())
+        println(instance<List<String?>>())
+        println(instance<List<Double?>>())
+        println(instance<List<Char?>>())
+        println(instance<List<Float?>>())
+        println(instance<List<Byte?>>())
+        println(instance<List<Boolean?>>())
+        println(instance<List<Short?>>())
     }
 
     @Test
@@ -47,7 +58,6 @@ class ListTest {
         val x : ClassWithNullListParam = instance(InstantiatorConfig(useNull = false))
         println(x)
     }
-
 
     data class ClassWithListParam(val i : Int, val ints : List<Int>, val items : List<Item>)
     data class ClassWithMutableListParam(val i : Int, val ints : MutableList<Int>, val items : MutableList<Item>)

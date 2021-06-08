@@ -14,6 +14,10 @@ class SetTest {
     fun `Set is computed directly`(){
         val x : Set<ListTest.Item> = instance()
         println(x)
+
+        // Null test
+        val y : Set<ListTest.Item?> = instance()
+        println(y)
     }
 
     @Test

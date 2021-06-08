@@ -28,6 +28,10 @@ class MapTest {
     fun `Map with key as class is generated directly`() {
         val x: Map<ListTest.Item, ListTest.Item> = instance()
         println(x)
+
+        // Null test
+        val y: Map<ListTest.Item?, ListTest.Item?> = instance()
+        println(y)
     }
 
     @Test

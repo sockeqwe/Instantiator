@@ -5,7 +5,6 @@ import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 
-
 private object IntInstanceFactory : InstanceFactory<Int> {
     override val type: KType = Int::class.createType()
     override fun createInstance(): Int = Random.nextInt()
