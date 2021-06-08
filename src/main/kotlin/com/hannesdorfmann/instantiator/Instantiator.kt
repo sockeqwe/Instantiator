@@ -9,9 +9,13 @@ import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.jvmName
 
 private val wildcardListType = List::class.createType(arguments = listOf(KTypeProjection.STAR))
+private val wildcardListNullType = List::class.createType(arguments = listOf(KTypeProjection.STAR), nullable = true)
 private val wildcardCollectionType = Collection::class.createType(arguments = listOf(KTypeProjection.STAR))
+private val wildcardCollectionNullType = Collection::class.createType(arguments = listOf(KTypeProjection.STAR), nullable = true)
 private val wildcardSetType = Set::class.createType(arguments = listOf(KTypeProjection.STAR))
+private val wildcardSetNullType = Set::class.createType(arguments = listOf(KTypeProjection.STAR), nullable = true)
 private val wildcardMapType = Map::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR))
+private val wildcardMapNullType = Map::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR), nullable = true)
 
 class Instantiator(private val config: InstantiatorConfig) {
 
@@ -36,8 +40,11 @@ class Instantiator(private val config: InstantiatorConfig) {
             val genericsType = type.arguments[0].type!!
             when {
                 type.isSubtypeOf(wildcardListType) -> return fillList(genericsType) as T
+                type.isSubtypeOf(wildcardListNullType) -> return fillList(genericsType) as T
                 type.isSubtypeOf(wildcardSetType) -> return fillSet(genericsType) as T
+                type.isSubtypeOf(wildcardSetNullType) -> return fillSet(genericsType) as T
                 type.isSubtypeOf(wildcardCollectionType) -> return fillList(genericsType) as T
+                type.isSubtypeOf(wildcardCollectionNullType) -> return fillList(genericsType) as T
             }
         } else if (type.arguments.size == 2) {
             val genericsType1 = type.arguments[0].type!!
@@ -45,6 +52,7 @@ class Instantiator(private val config: InstantiatorConfig) {
 
             when {
                 type.isSubtypeOf(wildcardMapType) -> return fillMap(genericsType1, genericsType2) as T
+                type.isSubtypeOf(wildcardMapNullType) -> return fillMap(genericsType1, genericsType2) as T
             }
         }
 

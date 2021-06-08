@@ -42,9 +42,15 @@ class ListTest {
         println(x)
     }
 
+    @Test
+    fun `class with nullable list as parameter is instantiated`() {
+        val x : ClassWithNullListParam = instance(InstantiatorConfig(useNull = false))
+        println(x)
+    }
+
 
     data class ClassWithListParam(val i : Int, val ints : List<Int>, val items : List<Item>)
     data class ClassWithMutableListParam(val i : Int, val ints : MutableList<Int>, val items : MutableList<Item>)
-
+    data class ClassWithNullListParam(val list: List<Item>?, val mutableList : MutableList<Item>?)
     data class Item(val s : String, val b : Boolean)
 }

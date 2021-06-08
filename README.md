@@ -103,11 +103,14 @@ Some settings that you can set:
 - `InstantiatorConfig.useDefaultArguments`: Set it to `true` if you want that the default arguments of 
   constructor parameters are used if provided. 
   For example, given `data class MyClass(val id : Int, val name : String = "Barbra")`, if `config.useDefaultArguments = true` 
-  then the parameter`name` of any Foo instance will be `name="Barbra"` and only `id` which has no default argument set 
+  then the parameter`name` of any instance will be `name="Barbra"` and only `id` which has no default argument set 
   will be filled with random value.
-  Default behavior of the default config is that `InstantiatorConfig.useDefaultArguments = true`.
-
-
+  Default value of the default config is that `InstantiatorConfig.useDefaultArguments = true`.
+- `InstantiatorConfig.useNull`: Set it to `true` if for constructor parameters that can be `null`, 
+  `null` is actually the value. for example, given `data class MyClass(val id : Int?)`, if `config.useNull = true` 
+  then instance will look like `MyClass( id = null)`. If `config.useNull = false` then nullable parameters will 
+  have non null values i.e. `MyClass ( id = 123)`.
+  Default value of default config is `InstantiatorConfig.useNull = true`
 
 
 

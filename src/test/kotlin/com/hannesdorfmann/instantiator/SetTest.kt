@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 class SetTest {
 
     @Test
-    fun `Set and mutable set in constructor is supported`(){
+    fun `Set and MutableSet in constructor is supported`(){
         val x : SetWrapper = instance()
         println(x)
     }
@@ -22,5 +22,12 @@ class SetTest {
         println(x)
     }
 
+    @Test
+    fun `Set and MutableSet that can be null as constructor parameter are supported`(){
+        val x : SetNullWrapper = instance(InstantiatorConfig(useNull = false))
+        println(x)
+    }
+
     data class SetWrapper(val i : Int, val set: Set<ListTest.Item>, val mutableSet: MutableSet<ListTest.Item>)
+    data class SetNullWrapper(val i : Int, val set: Set<ListTest.Item>?, val mutableSet: MutableSet<ListTest.Item>?)
 }
