@@ -132,7 +132,7 @@ class Instantiator(private val config: InstantiatorConfig) {
                     primaryConstructor.parameters
                         .filter { if (config.useDefaultArguments) !it.isOptional else true}
                         .associateWith { parameter ->
-                           val value =  if (config.useNull && parameter.type.isMarkedNullable)
+                           val value : T? = if (config.useNull && parameter.type.isMarkedNullable)
                                 null
                             else
                                 createInstance(parameter.type)
