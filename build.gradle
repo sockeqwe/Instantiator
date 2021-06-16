@@ -18,6 +18,9 @@ repositories {
 
 apply plugin: "com.vanniktech.maven.publish"
 
+mavenPublish {
+    releaseSigningEnabled = false
+}
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
@@ -29,4 +32,3 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-
