@@ -19,6 +19,9 @@ jobs:
         with:
           java-version: 1.8
 
+      - name: Build
+        ./gradlew build
+
       - name: Upload release
         run: ./gradlew publish --no-daemon --no-parallel
         env:
