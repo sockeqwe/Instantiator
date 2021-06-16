@@ -1,13 +1,23 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.15.1'
+    }
+}
+
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.5.10'
 }
 
-group 'com.hannesdorfmann'
-version '0.0.1-SNAPSHOT'
-
 repositories {
     mavenCentral()
 }
+
+apply plugin: "com.vanniktech.maven.publish"
+
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
@@ -19,3 +29,4 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
