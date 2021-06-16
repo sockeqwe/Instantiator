@@ -9,6 +9,16 @@ referring on data class or POJOs, not mock functionality.
 It doesn't use any black magic. It uses reflection and invokes the public primary constructors. If there is no public
 primary constructor available, then Instantiator cannot instantiate it.
 
+## Dependencies
+```
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.1.0
+```
+
+or `SNAPSHOT` (directly built from main branch):
+```
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.1.1-SNAPSHOT
+```
+
 ## Usage
 
 Assuming you have some data structures like this
