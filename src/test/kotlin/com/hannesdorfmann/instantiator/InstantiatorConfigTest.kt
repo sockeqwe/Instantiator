@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
+import kotlin.reflect.KType
+import kotlin.reflect.full.createType
 
 class InstantiatorConfigTest {
 
@@ -19,7 +21,6 @@ class InstantiatorConfigTest {
         assertNotEquals(x.s, "someString")
         println(x)
     }
-
 
 
     @Test
@@ -40,6 +41,20 @@ class InstantiatorConfigTest {
         Assertions.assertNotNull(c.c)
         Assertions.assertNotNull(c.l)
         Assertions.assertNotNull(c.sh)
+    }
+
+    @Test
+    fun `adding InstanceFactory to InstanceConfig produces a new InstanceConfig instance with Factory added`() {
+        val customString = "String was produced by custom InstanceFactory"
+        val customStringInstanceFactory = object : InstantiatorConfig.InstanceFactory<String> {
+            override val type: KType = String::class.createType()
+            override fun createInstance(): String = customString
+        }
+
+        val config1 = InstantiatorConfig()
+        val config2 = config1.add(customStringInstanceFactory)
+        assertNotEquals(customString, instance<String>(config1))
+        assertEquals(customString, instance<String>(config2))
     }
 
     data class ClassWithAllOptionals(

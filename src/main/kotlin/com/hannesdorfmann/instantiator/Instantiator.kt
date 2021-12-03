@@ -74,7 +74,7 @@ class Instantiator(private val config: InstantiatorConfig) {
 
 
     private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T): T {
-        val factory: InstanceFactory<T>? = config.instanceFactory[type] as InstanceFactory<T>?
+        val factory: InstantiatorConfig.InstanceFactory<T>? = config.instanceFactory[type] as InstantiatorConfig.InstanceFactory<T>?
         val instance =  factory?.createInstance() ?: alternative()
         return instance
     }
