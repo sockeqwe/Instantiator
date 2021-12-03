@@ -44,17 +44,43 @@ class InstantiatorConfigTest {
     }
 
     @Test
-    fun `adding InstanceFactory to InstanceConfig produces a new InstanceConfig instance with Factory added`() {
+    fun `add() InstanceFactory overrides existing factory and produces a new InstanceConfig instance`() {
         val customString = "String was produced by custom InstanceFactory"
         val customStringInstanceFactory = object : InstantiatorConfig.InstanceFactory<String> {
             override val type: KType = String::class.createType()
             override fun createInstance(): String = customString
         }
 
-        val config1 = InstantiatorConfig()
+        val config1 = InstantiatorConfig(useNull = false, useDefaultArguments = false)
         val config2 = config1.add(customStringInstanceFactory)
         assertNotEquals(customString, instance<String>(config1))
         assertEquals(customString, instance<String>(config2))
+        assertEquals(config1.useNull, config2.useNull)
+        assertEquals(config1.useDefaultArguments, config2.useDefaultArguments)
+        assertEquals(config1.instanceFactory.size, config2.instanceFactory.size)
+    }
+
+    @Test
+    fun `add() creates a new InstanceFactory and produces a new InstanceConfig instance`() {
+
+        val interfaceInstance = object : TestInterface {}
+        val customStringInstanceFactory = object : InstantiatorConfig.InstanceFactory<TestInterface> {
+            override val type: KType = TestInterface::class.createType()
+            override fun createInstance(): TestInterface = interfaceInstance
+        }
+
+        val config1 = InstantiatorConfig(useNull = false, useDefaultArguments = false)
+        val config2 = config1.add(customStringInstanceFactory)
+
+        try {
+            instance<TestInterface>(config1)
+            Assertions.fail("Exception expected to be thrown because config doesn't has InstanceFactory for TestInterface")
+        } catch (e: UnsupportedOperationException) {
+        }
+        assertEquals(interfaceInstance, instance<TestInterface>(config2))
+        assertEquals(config1.useNull, config2.useNull)
+        assertEquals(config1.useDefaultArguments, config2.useDefaultArguments)
+        assertEquals(config1.instanceFactory.size + 1, config2.instanceFactory.size)
     }
 
     data class ClassWithAllOptionals(
@@ -70,4 +96,6 @@ class InstantiatorConfigTest {
     )
 
     data class ClassWithDefaults(val i: Int, val s: String = "someString")
+
+    interface TestInterface {}
 }

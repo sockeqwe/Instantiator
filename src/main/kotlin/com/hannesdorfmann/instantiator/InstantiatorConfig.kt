@@ -124,6 +124,8 @@ class InstantiatorConfig(
         factories = (this.instanceFactory.values + factories).toTypedArray()
     )
 
+    operator fun <T : Any> plus(factory: InstanceFactory<T>): InstantiatorConfig = add(factory)
+
     companion object {
         val DEFAULT_INSTANCE_FACTORIES: Array<InstanceFactory<out Any>> = arrayOf(
             IntInstanceFactory,
