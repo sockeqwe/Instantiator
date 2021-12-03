@@ -12,13 +12,13 @@ primary constructor available, then Instantiator cannot instantiate it.
 ## Dependencies
 
 ```
-testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.2.1
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.3.0'
 ```
 
 or `SNAPSHOT` (directly built from main branch):
 
 ```
-testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.2.2-SNAPSHOT
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.3.1-SNAPSHOT'
 ```
 
 ## Usage
@@ -123,6 +123,34 @@ Some settings that you can set:
   `null` is actually the value. for example, given `data class MyClass(val id : Int?)`, if `config.useNull = true`
   then instance will look like `MyClass( id = null)`. If `config.useNull = false` then nullable parameters will have non
   null values i.e. `MyClass ( id = 123)`. Default value of default config is `InstantiatorConfig.useNull = true`
+
+In case a constructor parameter is both: nullable and has a default value, then the default config uses ensures that the
+default value for the parameter is used. Example:
+
+```kotlin
+class Foo(val i: Int? = 42)
+
+val foo = instance<Foo>()
+
+println(foo.i) // prints 42
+```
+
+## Custom `InstanceFactory`
+
+`InstantiatorConfig` takes as a constructor parameter `vararg factories: InstanceFactory`. An `InstanceFactory` is used
+to create an instance in case a unsupported type needs to be instantiated (see Supported use cases table above) or if
+you want to override how primitive types are instantiated.
+
+```kotlin
+class MyIntInstanceFactory : InstantiatorConfig.InstanceFactory<Int> {
+    override val type: KType = Int::class.createType()
+    override fun createInstance(): Int = 42
+}
+
+val config = InstantiatorConfig(MyIntInstanceFactory())
+
+val i = instance<Int>(config) // i == 42 and all other ints will be 42 when using this config
+```
 
 `InstantiatorConfig` is immutable. You can add an `InstanceFactory` with
 the `val newConfig : InstantiatorConfig = instantiatorConfig.add(myCustomFactoy)`
