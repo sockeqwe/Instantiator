@@ -12,13 +12,13 @@ primary constructor available, then Instantiator cannot instantiate it.
 ## Dependencies
 
 ```
-testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.2.0
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.2.1
 ```
 
 or `SNAPSHOT` (directly built from main branch):
 
 ```
-testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.2.1-SNAPSHOT
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.2.2-SNAPSHOT
 ```
 
 ## Usage

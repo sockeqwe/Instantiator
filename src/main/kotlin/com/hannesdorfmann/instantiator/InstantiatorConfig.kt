@@ -118,7 +118,10 @@ class InstantiatorConfig(
 
     internal val instanceFactory: Map<KType, InstanceFactory<out Any>> = factories.associateBy { it.type }
 
-    fun <T : Any> add(vararg factories: InstanceFactory<T>): InstantiatorConfig = InstantiatorConfig(
+    /**
+     * Adds a copy of this [InstantiatorConfig] and then adds the [InstanceFactory] to the new config.
+     */
+    fun add(vararg factories: InstanceFactory<out Any>): InstantiatorConfig = InstantiatorConfig(
         useDefaultArguments = this.useDefaultArguments,
         useNull = this.useNull,
         factories = (this.instanceFactory.values + factories).toTypedArray()
