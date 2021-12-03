@@ -10,13 +10,15 @@ It doesn't use any black magic. It uses reflection and invokes the public primar
 primary constructor available, then Instantiator cannot instantiate it.
 
 ## Dependencies
+
 ```
-testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.1.0
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.2.0
 ```
 
 or `SNAPSHOT` (directly built from main branch):
+
 ```
-testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.1.1-SNAPSHOT
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.2.1-SNAPSHOT
 ```
 
 ## Usage
@@ -74,7 +76,7 @@ sealed class NestedRoot : Root()
 data class N1(i: Int) : NestedRoot()
 
 
-val subclassesInstances : List<Root> = instantiateSealedSubclasses()
+val subclassesInstances: List<Root> = instantiateSealedSubclasses()
 println(subclasses) // contains 3 instances and prints  "A, B, N1"
 ```
 
@@ -104,23 +106,24 @@ Type | Support | Note and default behavior description
 `Boolean`  | ✅️ | randomly returns true or false
 `Byte` | ✅️ | randomly creates one byte and returns it
 
-
 ## Configuration
-You can configure Instantiator by passing a `InstantiatorConfig` instance as parameter to `instance(config : InstantiatorConfig)` or `instantiateSealedSubclasses(config : InstantiatorConfig)`.
+
+You can configure Instantiator by passing a `InstantiatorConfig` instance as parameter
+to `instance(config : InstantiatorConfig)` or `instantiateSealedSubclasses(config : InstantiatorConfig)`.
 
 Some settings that you can set:
 
-- `InstantiatorConfig.useDefaultArguments`: Set it to `true` if you want that the default arguments of 
-  constructor parameters are used if provided. 
-  For example, given `data class MyClass(val id : Int, val name : String = "Barbra")`, if `config.useDefaultArguments = true` 
-  then the parameter`name` of any instance will be `name="Barbra"` and only `id` which has no default argument set 
-  will be filled with random value.
-  Default value of the default config is that `InstantiatorConfig.useDefaultArguments = true`.
-- `InstantiatorConfig.useNull`: Set it to `true` if for constructor parameters that can be `null`, 
-  `null` is actually the value. for example, given `data class MyClass(val id : Int?)`, if `config.useNull = true` 
-  then instance will look like `MyClass( id = null)`. If `config.useNull = false` then nullable parameters will 
-  have non null values i.e. `MyClass ( id = 123)`.
-  Default value of default config is `InstantiatorConfig.useNull = true`
+- `InstantiatorConfig.useDefaultArguments`: Set it to `true` if you want that the default arguments of constructor
+  parameters are used if provided. For example, given `data class MyClass(val id : Int, val name : String = "Barbra")`,
+  if `config.useDefaultArguments = true`
+  then the parameter`name` of any instance will be `name="Barbra"` and only `id` which has no default argument set will
+  be filled with random value. Default value of the default config is
+  that `InstantiatorConfig.useDefaultArguments = true`.
+- `InstantiatorConfig.useNull`: Set it to `true` if for constructor parameters that can be `null`,
+  `null` is actually the value. for example, given `data class MyClass(val id : Int?)`, if `config.useNull = true`
+  then instance will look like `MyClass( id = null)`. If `config.useNull = false` then nullable parameters will have non
+  null values i.e. `MyClass ( id = 123)`. Default value of default config is `InstantiatorConfig.useNull = true`
 
-
+`InstantiatorConfig` is immutable. You can add an `InstanceFactory` with
+the `val newConfig : InstantiatorConfig = instantiatorConfig.add(myCustomFactoy)`
 
