@@ -11,11 +11,13 @@ import kotlin.reflect.jvm.jvmName
 private val wildcardListType = List::class.createType(arguments = listOf(KTypeProjection.STAR))
 private val wildcardListNullType = List::class.createType(arguments = listOf(KTypeProjection.STAR), nullable = true)
 private val wildcardCollectionType = Collection::class.createType(arguments = listOf(KTypeProjection.STAR))
-private val wildcardCollectionNullType = Collection::class.createType(arguments = listOf(KTypeProjection.STAR), nullable = true)
+private val wildcardCollectionNullType =
+    Collection::class.createType(arguments = listOf(KTypeProjection.STAR), nullable = true)
 private val wildcardSetType = Set::class.createType(arguments = listOf(KTypeProjection.STAR))
 private val wildcardSetNullType = Set::class.createType(arguments = listOf(KTypeProjection.STAR), nullable = true)
 private val wildcardMapType = Map::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR))
-private val wildcardMapNullType = Map::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR), nullable = true)
+private val wildcardMapNullType =
+    Map::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR), nullable = true)
 
 class Instantiator(private val config: InstantiatorConfig) {
 
@@ -74,8 +76,9 @@ class Instantiator(private val config: InstantiatorConfig) {
 
 
     private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T): T {
-        val factory: InstantiatorConfig.InstanceFactory<T>? = config.instanceFactory[type] as InstantiatorConfig.InstanceFactory<T>?
-        val instance =  factory?.createInstance() ?: alternative()
+        val factory: InstantiatorConfig.InstanceFactory<T>? =
+            config.instanceFactory[type] as InstantiatorConfig.InstanceFactory<T>?
+        val instance = factory?.createInstance() ?: alternative()
         return instance
     }
 
@@ -136,21 +139,26 @@ class Instantiator(private val config: InstantiatorConfig) {
                     )
                 }
 
-                val primaryConstructorParameters: Map<KParameter, Any?> =
-                    primaryConstructor.parameters
-                        .filter { if (config.useDefaultArguments) !it.isOptional else true}
-                        .associateWith { parameter ->
-                           val value : T? = if (config.useNull && parameter.type.isMarkedNullable)
-                                null
-                            else
-                                createInstance(parameter.type)
-                            value
-                        }
-
-                if (primaryConstructorParameters.isEmpty()) {
+                if (primaryConstructor.parameters.isEmpty()) {
                     primaryConstructor.call()
                 } else {
-                    primaryConstructor.callBy(primaryConstructorParameters)
+
+                    val primaryConstructorParameters: Map<KParameter, Any?> =
+                        primaryConstructor.parameters
+                            .filter { if (config.useDefaultArguments) !it.isOptional else true }
+                            .associateWith { parameter ->
+                                val value: T? = if (config.useNull && parameter.type.isMarkedNullable)
+                                    null
+                                else
+                                    createInstance(parameter.type)
+                                value
+                            }
+
+                    if (primaryConstructorParameters.isEmpty()) {
+                        primaryConstructor.callBy(emptyMap())
+                    } else {
+                        primaryConstructor.callBy(primaryConstructorParameters)
+                    }
                 }
             }
         } else {
