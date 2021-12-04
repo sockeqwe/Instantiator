@@ -124,8 +124,8 @@ Some settings that you can set:
   then instance will look like `MyClass( id = null)`. If `config.useNull = false` then nullable parameters will have non
   null values i.e. `MyClass ( id = 123)`. Default value of default config is `InstantiatorConfig.useNull = true`
 
-In case a constructor parameter is both: nullable and has a default value, then the default config uses ensures that the
-default value for the parameter is used. Example:
+In case a constructor parameter is both, nullable and has a default value, then the default config uses the
+default value for the parameter. Example:
 
 ```kotlin
 class Foo(val i: Int? = 42)
