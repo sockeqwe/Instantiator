@@ -6,14 +6,53 @@ import org.junit.jupiter.api.Test
 class TripleTest {
 
     @Test
-    fun `Triple in constructor are supported`() {
+    fun `Triple in constructor is supported`() {
+        data class TripleWrapper(
+            val i: Int,
+            val Triple: Triple<Int, String, Double>,
+        )
+
         val x: TripleWrapper = instance()
         println(x)
     }
 
     @Test
-    fun `Triple with non primitive values are supported`() {
-        val x: TripleWrapper2 = instance()
+    fun `Triple with primitive nullable values is supported`() {
+        data class TripleWrapper(
+            val Triple: Triple<Int?, String?, Double?>,
+        )
+
+        val x: TripleWrapper = instance()
+        println(x)
+    }
+
+    @Test
+    fun `Triple with non primitive values is supported`() {
+        data class TripleWrapper(
+            val Triple: Triple<ListTest.Item, ListTest.Item, ListTest.Item>,
+        )
+
+        val x: TripleWrapper = instance()
+        println(x)
+    }
+
+    @Test
+    fun `Triple with non primitive nullable values is supported`() {
+        data class TripleWrapper(
+            val Triple: Triple<ListTest.Item?, ListTest.Item?, ListTest.Item?>,
+        )
+
+        val x: TripleWrapper = instance()
+        println(x)
+    }
+
+    @Test
+    fun `nullable Triple as constructor parameter is supported`() {
+        data class NullTripleWrapper(
+            val Triple: Triple<ListTest.Item, ListTest.Item, ListTest.Item>?,
+        )
+
+        val x: NullTripleWrapper = instance(InstantiatorConfig(useNull = false))
         println(x)
     }
 
@@ -21,6 +60,10 @@ class TripleTest {
     fun `Triple with primitive values is generated directly`() {
         val x: Triple<Int, String, Double> = instance()
         println(x)
+
+        // Null test
+        val y: Triple<Int?, String?, Double?> = instance()
+        println(y)
     }
 
     @Test
@@ -32,23 +75,4 @@ class TripleTest {
         val y: Triple<ListTest.Item?, ListTest.Item?, ListTest.Item?> = instance()
         println(y)
     }
-
-    @Test
-    fun `nullable Triple as constructor parameter is supported`() {
-        val x: NullTripleWrapper = instance(InstantiatorConfig(useNull = false))
-        println(x)
-    }
-
-    data class TripleWrapper(
-        val i: Int,
-        val Triple: Triple<Int, String, Double>,
-    )
-
-    data class TripleWrapper2(
-        val Triple: Triple<ListTest.Item, ListTest.Item, ListTest.Item>,
-    )
-
-    data class NullTripleWrapper(
-        val Triple: Triple<ListTest.Item, ListTest.Item, ListTest.Item>?,
-    )
 }

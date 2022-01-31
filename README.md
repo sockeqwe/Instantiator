@@ -96,6 +96,8 @@ Type | Support | Note and default behavior description
 `Set` | ✅️ | `Set` and `MutableSet` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Set<Person>)` but you can also directly request an instance with `val persons : Set<Person> = instance()`
 `Map` | ✅️ | `Map` and `MutableMap` are supported in class constructors. i.e. in instance of PhoneBook can be instantiated: `data class PhoneBook(val phoneNumbers : Map<Person, PhoneNumber>)` but you can also directly request an instance with `val phoneBook : Map<Person, PhoneNumber>> = instance()`
 `Collection` | ✅️ | `Collection` and `MutableCollection` are supported in class constructors. i.e. in instance of AdressBook can be instantiated: `data class AdressBook(val persons : Collection<Person>)`  but you can also directly request an instance with `val persons : Collection<Person>> = instance()`
+`Pair` | ✅️ | supported in class constructors and directly in request
+`Triple` | ✅️ | supported in class constructors and directly in request
 `Int`  | ✅️ | random number is returned
 `Long`  | ✅️ | random number is returned
 `Float`  | ✅️ | random number is returned
