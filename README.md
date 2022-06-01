@@ -125,6 +125,8 @@ Some settings that you can set:
   `null` is actually the value. for example, given `data class MyClass(val id : Int?)`, if `config.useNull = true`
   then instance will look like `MyClass( id = null)`. If `config.useNull = false` then nullable parameters will have non
   null values i.e. `MyClass ( id = 123)`. Default value of default config is `InstantiatorConfig.useNull = true`
+- `InstantiatorConfig.random`: By setting it to a seeded `Random` you can recreate objects between tests and environments.
+  For example by setting it to `Random(0)`
 
 In case a constructor parameter is both, nullable and has a default value, then the default config uses the
 default value for the parameter. Example:
@@ -146,7 +148,7 @@ you want to override how primitive types are instantiated.
 ```kotlin
 class MyIntInstanceFactory : InstantiatorConfig.InstanceFactory<Int> {
     override val type: KType = Int::class.createType()
-    override fun createInstance(): Int = 42
+    override fun createInstance(random: Random): Int = 42
 }
 
 val config = InstantiatorConfig(MyIntInstanceFactory())

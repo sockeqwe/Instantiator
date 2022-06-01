@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
+import kotlin.random.Random
 import kotlin.reflect.KType
 import kotlin.reflect.full.createType
 
@@ -48,7 +49,7 @@ class InstantiatorConfigTest {
         val customString = "String was produced by custom InstanceFactory"
         val customStringInstanceFactory = object : InstantiatorConfig.InstanceFactory<String> {
             override val type: KType = String::class.createType()
-            override fun createInstance(): String = customString
+            override fun createInstance(random: Random): String = customString
         }
 
         val config1 = InstantiatorConfig(useNull = false, useDefaultArguments = false)
@@ -66,7 +67,7 @@ class InstantiatorConfigTest {
         val interfaceInstance = object : TestInterface {}
         val customStringInstanceFactory = object : InstantiatorConfig.InstanceFactory<TestInterface> {
             override val type: KType = TestInterface::class.createType()
-            override fun createInstance(): TestInterface = interfaceInstance
+            override fun createInstance(random: Random): TestInterface = interfaceInstance
         }
 
         val config1 = InstantiatorConfig(useNull = false, useDefaultArguments = false)
@@ -81,6 +82,17 @@ class InstantiatorConfigTest {
         assertEquals(config1.useNull, config2.useNull)
         assertEquals(config1.useDefaultArguments, config2.useDefaultArguments)
         assertEquals(config1.instanceFactory.size + 1, config2.instanceFactory.size)
+    }
+
+    @Test
+    internal fun `setting random creates a stable object`() {
+        val config1 = InstantiatorConfig(useNull = false, random = Random(0))
+        val config2 = InstantiatorConfig(useNull = false, random = Random(0))
+
+        val instance1 = instance<ClassWithAllOptionals>(config1)
+        val instance2 = instance<ClassWithAllOptionals>(config2)
+
+        assertEquals(instance1, instance2)
     }
 
     data class ClassWithAllOptionals(
