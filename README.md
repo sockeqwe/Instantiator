@@ -3,8 +3,8 @@
 Tired of manually setup test data of Kotlin data classes or POJOs? Instantiator creates Instances of any class for you
 so that you can focus on writing tests instead of spending time and effort to set up test data.
 
-This is not a mocking library. When talking about Instantiator can create an instance of any class for you, I'm
-referring on data class or POJOs, not mock functionality.
+This is not a mocking library. When saying that Instantiator can create an instance of any class for you, I'm
+referring to data classes or POJOs, not mock functionality.
 
 It doesn't use any black magic. It uses reflection and invokes the public primary constructors. If there is no public
 primary constructor available, then Instantiator cannot instantiate it.
@@ -12,13 +12,13 @@ primary constructor available, then Instantiator cannot instantiate it.
 ## Dependencies
 
 ```
-testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.3.0'
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.4.0'
 ```
 
-or `SNAPSHOT` (directly built from main branch):
+or `SNAPSHOT` (directly built from `main` branch):
 
 ```
-testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.3.1-SNAPSHOT'
+testImplementation 'com.hannesdorfmann.instantiator:instantiator:0.4.1-SNAPSHOT'
 ```
 
 ## Usage
@@ -142,7 +142,7 @@ println(foo.i) // prints 42
 ## Custom `InstanceFactory`
 
 `InstantiatorConfig` takes as a constructor parameter `vararg factories: InstanceFactory`. An `InstanceFactory` is used
-to create an instance in case a unsupported type needs to be instantiated (see Supported use cases table above) or if
+to create an instance in case an unsupported build-in type needs to be instantiated (see Supported use cases table above) or if
 you want to override how primitive types are instantiated.
 
 ```kotlin
