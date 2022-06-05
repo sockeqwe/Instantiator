@@ -21,8 +21,8 @@ class InstantTest {
 
     @Test
     fun `nullalble Instant is supported`() {
-        val x: NullableInstantInConstructor = instance()
-        Assertions.assertNull(x.date)
+        val x: NullableInstantInConstructor = instance(InstantiatorConfig(useNull = false))
+        Assertions.assertNotNull(x.date)
     }
 
     data class InstantInConstructor(val date: Instant)

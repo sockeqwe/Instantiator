@@ -1,6 +1,8 @@
 package com.hannesdorfmann.instantiator
 
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.Date
 import kotlin.experimental.and
 import kotlin.random.Random
@@ -137,6 +139,28 @@ private object InstantNullableInstanceFactory : InstantiatorConfig.InstanceFacto
     override fun createInstance(random: Random): Instant = Instant.ofEpochMilli(random.nextLong())
 }
 
+private object LocalDateTimeInstanceFactory : InstantiatorConfig.InstanceFactory<LocalDateTime> {
+
+    override val type: KType = LocalDateTime::class.createType()
+
+    override fun createInstance(random: Random): LocalDateTime =
+        LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(random.nextLong()),
+            ZoneId.of(ZoneId.getAvailableZoneIds().random(random))
+        )
+}
+
+private object LocalDateTimeNullableInstanceFactory : InstantiatorConfig.InstanceFactory<LocalDateTime> {
+
+    override val type: KType = LocalDateTime::class.createType(nullable = true)
+
+    override fun createInstance(random: Random): LocalDateTime =
+        LocalDateTime.ofInstant(
+            Instant.ofEpochMilli(random.nextLong()),
+            ZoneId.of(ZoneId.getAvailableZoneIds().random(random))
+        )
+}
+
 class InstantiatorConfig(
     val useDefaultArguments: Boolean = true,
     val useNull: Boolean = true,
@@ -156,6 +180,7 @@ class InstantiatorConfig(
     )
 
     operator fun <T : Any> plus(factory: InstanceFactory<T>): InstantiatorConfig = add(factory)
+
 
     companion object {
         val DEFAULT_INSTANCE_FACTORIES: Array<InstanceFactory<out Any>> = arrayOf(
@@ -180,7 +205,9 @@ class InstantiatorConfig(
             DateInstanceFactory,
             DateNullInstanceFactory,
             InstantInstanceFactory,
-            InstantNullableInstanceFactory
+            InstantNullableInstanceFactory,
+            LocalDateTimeInstanceFactory,
+            LocalDateTimeNullableInstanceFactory
         )
     }
 

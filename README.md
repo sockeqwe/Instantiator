@@ -109,6 +109,7 @@ Type | Support | Note and default behavior description
 `Byte` | ✅️ | randomly creates one byte and returns it
 `java.util.Date` | ✅️ | randomly creates a `Date`
 `java.time.Instant` | ✅️ | randomly creates a `Instant`
+`java.time.LocalDateTime` | ✅️ | randomly creates a `LocalDateTime` in a random `ZoneId`
 
 ## Configuration
 
