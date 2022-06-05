@@ -108,6 +108,7 @@ Type | Support | Note and default behavior description
 `Boolean`  | ✅️ | randomly returns true or false
 `Byte` | ✅️ | randomly creates one byte and returns it
 `java.util.Date` | ✅️ | randomly creates a `Date`
+`java.time.Instant` | ✅️ | randomly creates a `Instant`
 
 ## Configuration
 

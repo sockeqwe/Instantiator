@@ -1,5 +1,6 @@
 package com.hannesdorfmann.instantiator
 
+import java.time.Instant
 import java.util.Date
 import kotlin.experimental.and
 import kotlin.random.Random
@@ -122,6 +123,20 @@ private object DateNullInstanceFactory : InstantiatorConfig.InstanceFactory<Date
     override fun createInstance(random: Random): Date = Date(random.nextLong())
 }
 
+private object InstantInstanceFactory : InstantiatorConfig.InstanceFactory<Instant> {
+
+    override val type: KType = Instant::class.createType()
+
+    override fun createInstance(random: Random): Instant = Instant.ofEpochMilli(random.nextLong())
+}
+
+private object InstantNullableInstanceFactory : InstantiatorConfig.InstanceFactory<Instant> {
+
+    override val type: KType = Instant::class.createType(nullable = true)
+
+    override fun createInstance(random: Random): Instant = Instant.ofEpochMilli(random.nextLong())
+}
+
 class InstantiatorConfig(
     val useDefaultArguments: Boolean = true,
     val useNull: Boolean = true,
@@ -163,7 +178,9 @@ class InstantiatorConfig(
             ByteInstanceFactory,
             ByteNullInstanceFactory,
             DateInstanceFactory,
-            DateNullInstanceFactory
+            DateNullInstanceFactory,
+            InstantInstanceFactory,
+            InstantNullableInstanceFactory
         )
     }
 
