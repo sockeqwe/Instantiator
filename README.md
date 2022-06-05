@@ -107,6 +107,7 @@ Type | Support | Note and default behavior description
 `Char`  | ✅️ | random char is returned from the following pool of chars: `a..z` + `A..Z` + `0..9`.
 `Boolean`  | ✅️ | randomly returns true or false
 `Byte` | ✅️ | randomly creates one byte and returns it
+`java.util.Date` | ✅️ | randomly creates a `Date`
 
 ## Configuration
 

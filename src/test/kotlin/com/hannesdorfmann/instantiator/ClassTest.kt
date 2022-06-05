@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
 package com.hannesdorfmann.instantiator
 
 import org.junit.jupiter.api.Assertions.assertEquals

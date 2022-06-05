@@ -1,5 +1,6 @@
 package com.hannesdorfmann.instantiator
 
+import java.util.Date
 import kotlin.experimental.and
 import kotlin.random.Random
 import kotlin.reflect.KType
@@ -109,6 +110,17 @@ private object CharNullInstanceFactory : InstantiatorConfig.InstanceFactory<Char
 
 private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 
+private object DateInstanceFactory : InstantiatorConfig.InstanceFactory<Date> {
+    override val type: KType = Date::class.createType()
+
+    override fun createInstance(random: Random): Date = Date(random.nextLong())
+}
+
+private object DateNullInstanceFactory : InstantiatorConfig.InstanceFactory<Date> {
+    override val type: KType = Date::class.createType(nullable = true)
+
+    override fun createInstance(random: Random): Date = Date(random.nextLong())
+}
 
 class InstantiatorConfig(
     val useDefaultArguments: Boolean = true,
@@ -149,7 +161,9 @@ class InstantiatorConfig(
             ShortInstanceFactory,
             ShortNullInstanceFactory,
             ByteInstanceFactory,
-            ByteNullInstanceFactory
+            ByteNullInstanceFactory,
+            DateInstanceFactory,
+            DateNullInstanceFactory
         )
     }
 

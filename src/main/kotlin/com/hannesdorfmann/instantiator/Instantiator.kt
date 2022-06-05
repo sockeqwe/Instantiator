@@ -53,9 +53,11 @@ class Instantiator(private val config: InstantiatorConfig) {
         )
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : Any> createInstance(type: KType): T {
 
         // Types with Generics
+
         when (type.arguments.size) {
             1 -> {
                 // Dealing with special cases such as collections
@@ -109,6 +111,7 @@ class Instantiator(private val config: InstantiatorConfig) {
 
 
     private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T): T {
+        @Suppress("UNCHECKED_CAST")
         val factory: InstantiatorConfig.InstanceFactory<T>? =
             config.instanceFactory[type] as InstantiatorConfig.InstanceFactory<T>?
         val instance = factory?.createInstance(config.random) ?: alternative()
@@ -138,6 +141,7 @@ class Instantiator(private val config: InstantiatorConfig) {
         if (clazz.isSubclassOf(Enum::class)) {
             return fromInstanceFactoryIfAvailbaleOtherwise(type) {
                 val enumConstants = Class.forName(clazz.jvmName).enumConstants
+                @Suppress("UNCHECKED_CAST")
                 enumConstants[Random.nextInt(enumConstants.size)] as T
             }
         }
@@ -204,7 +208,6 @@ class Instantiator(private val config: InstantiatorConfig) {
     }
 }
 
-@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified T : Any> instance(config: InstantiatorConfig = InstantiatorConfig()): T =
     Instantiator(config).createInstance(typeOf<T>())
 

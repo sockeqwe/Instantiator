@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 package com.hannesdorfmann.instantiator
 
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -6,7 +8,6 @@ import org.junit.jupiter.api.Test
 
 
 class AbstractClassTest {
-
 
     @Test
     fun `abstract class are not supported and throw exception`() {
