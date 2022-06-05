@@ -47,7 +47,7 @@ class InstantiatorConfigTest {
     @Test
     fun `add() InstanceFactory overrides existing factory and produces a new InstanceConfig instance`() {
         val customString = "String was produced by custom InstanceFactory"
-        val customStringInstanceFactory = object : InstantiatorConfig.InstanceFactory<String> {
+        val customStringInstanceFactory = object : InstantiatorConfig.IF<String> {
             override val type: KType = String::class.createType()
             override fun createInstance(random: Random): String = customString
         }
@@ -65,7 +65,7 @@ class InstantiatorConfigTest {
     fun `add() creates a new InstanceFactory and produces a new InstanceConfig instance`() {
 
         val interfaceInstance = object : TestInterface {}
-        val customStringInstanceFactory = object : InstantiatorConfig.InstanceFactory<TestInterface> {
+        val customStringInstanceFactory = object : InstantiatorConfig.IF<TestInterface> {
             override val type: KType = TestInterface::class.createType()
             override fun createInstance(random: Random): TestInterface = interfaceInstance
         }

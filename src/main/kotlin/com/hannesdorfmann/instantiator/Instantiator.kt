@@ -31,32 +31,32 @@ private val wildcardTripleNullType =
 
 class Instantiator(private val config: InstantiatorConfig) {
 
-    private fun fillList(genericsType: KType): List<Any> {
-        return (1..10).map { createInstance(genericsType) as Any }.toMutableList()
+    private fun fillList(genericsType: KType): List<Any?> {
+        return (1..10).map { createInstance(genericsType) as Any? }.toMutableList()
     }
 
-    private fun fillSet(genericsType: KType): Set<Any> {
-        return (1..10).map { createInstance(genericsType) as Any }.toMutableSet()
+    private fun fillSet(genericsType: KType): Set<Any?> {
+        return (1..10).map { createInstance(genericsType) as Any? }.toMutableSet()
     }
 
-    private fun fillMap(keyGenericsType: KType, valueGenericsType: KType): Map<Any, Any> {
-        return (1..10).associate { createInstance(keyGenericsType) as Any to createInstance(valueGenericsType) as Any }
+    private fun fillMap(keyGenericsType: KType, valueGenericsType: KType): Map<Any?, Any?> {
+        return (1..10).associate { createInstance(keyGenericsType) as Any? to createInstance(valueGenericsType) as Any? }
             .toMutableMap()
     }
 
-    private fun fillPair(keyGenericsType: KType, valueGenericsType: KType): Pair<Any, Any> {
-        return createInstance(keyGenericsType) as Any to createInstance(valueGenericsType) as Any
+    private fun fillPair(keyGenericsType: KType, valueGenericsType: KType): Pair<Any?, Any?> {
+        return createInstance(keyGenericsType) as Any? to createInstance(valueGenericsType) as Any?
     }
 
     private fun fillTriple(
         firstGenericsType: KType,
         secondGenericsType: KType,
         thirdGenericsType: KType
-    ): Triple<Any, Any, Any> {
+    ): Triple<Any?, Any?, Any?> {
         return Triple(
-            createInstance(firstGenericsType) as Any,
-            createInstance(secondGenericsType) as Any,
-            createInstance(thirdGenericsType) as Any
+            createInstance(firstGenericsType) as Any?,
+            createInstance(secondGenericsType) as Any?,
+            createInstance(thirdGenericsType) as Any?
         )
     }
 
@@ -125,7 +125,7 @@ class Instantiator(private val config: InstantiatorConfig) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T): T? {
+    private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T?): T? {
         return when (val factory = config.instanceFactory[type]) {
             is InstantiatorConfig.IF<*> -> factory.createInstance(config.random) as T
             is InstantiatorConfig.NullableInstanceFactory<*> -> factory.createInstance(config.random) as T?
@@ -133,7 +133,7 @@ class Instantiator(private val config: InstantiatorConfig) {
         }
     }
 
-    private fun <T : Any> createInstance(clazz: KClass<T>): T {
+    private fun <T : Any> createInstance(clazz: KClass<T>): T? {
 
         // Singleton objects
         val singletonObject = clazz.objectInstance
@@ -223,8 +223,9 @@ class Instantiator(private val config: InstantiatorConfig) {
     }
 }
 
+
 inline fun <reified T : Any> instance(config: InstantiatorConfig = InstantiatorConfig()): T =
-    Instantiator(config).createInstance(typeOf<T>())
+    Instantiator(config).createInstance(typeOf<T>())!!
 
 inline fun <reified T : Any> instantiateSealedSubclasses(
     config: InstantiatorConfig = InstantiatorConfig()
@@ -253,7 +254,7 @@ inline fun <reified T : Any> instantiateSealedSubclasses(
                                 createSealedSubclassesList!!(it)
                             }
                         } else {
-                            listOf(instantiator.createInstance(it.createType()))
+                            listOf(instantiator.createInstance(it.createType())!!)
                         }
                     }
             }
