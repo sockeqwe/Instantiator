@@ -24,7 +24,10 @@ private val wildcardPairNullType =
 private val wildcardTripleType =
     Triple::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR, KTypeProjection.STAR))
 private val wildcardTripleNullType =
-    Triple::class.createType(arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR, KTypeProjection.STAR), nullable = true)
+    Triple::class.createType(
+        arguments = listOf(KTypeProjection.STAR, KTypeProjection.STAR, KTypeProjection.STAR),
+        nullable = true
+    )
 
 class Instantiator(private val config: InstantiatorConfig) {
 
@@ -45,7 +48,11 @@ class Instantiator(private val config: InstantiatorConfig) {
         return createInstance(keyGenericsType) as Any to createInstance(valueGenericsType) as Any
     }
 
-    private fun fillTriple(firstGenericsType: KType, secondGenericsType: KType, thirdGenericsType: KType): Triple<Any, Any, Any> {
+    private fun fillTriple(
+        firstGenericsType: KType,
+        secondGenericsType: KType,
+        thirdGenericsType: KType
+    ): Triple<Any, Any, Any> {
         return Triple(
             createInstance(firstGenericsType) as Any,
             createInstance(secondGenericsType) as Any,
@@ -54,7 +61,7 @@ class Instantiator(private val config: InstantiatorConfig) {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun <T : Any> createInstance(type: KType): T {
+    fun <T : Any> createInstance(type: KType): T? {
 
         // Types with Generics
 
@@ -88,8 +95,16 @@ class Instantiator(private val config: InstantiatorConfig) {
                 val genericsType3 = type.arguments[2].type!!
 
                 when {
-                    type.isSubtypeOf(wildcardTripleType) -> return fillTriple(genericsType1, genericsType2, genericsType3) as T
-                    type.isSubtypeOf(wildcardTripleNullType) -> return fillTriple(genericsType1, genericsType2, genericsType3) as T
+                    type.isSubtypeOf(wildcardTripleType) -> return fillTriple(
+                        genericsType1,
+                        genericsType2,
+                        genericsType3
+                    ) as T
+                    type.isSubtypeOf(wildcardTripleNullType) -> return fillTriple(
+                        genericsType1,
+                        genericsType2,
+                        genericsType3
+                    ) as T
                 }
             }
         }
@@ -109,13 +124,13 @@ class Instantiator(private val config: InstantiatorConfig) {
         }
     }
 
-
-    private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T): T {
-        @Suppress("UNCHECKED_CAST")
-        val factory: InstantiatorConfig.InstanceFactory<T>? =
-            config.instanceFactory[type] as InstantiatorConfig.InstanceFactory<T>?
-        val instance = factory?.createInstance(config.random) ?: alternative()
-        return instance
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T): T? {
+        return when (val factory = config.instanceFactory[type]) {
+            is InstantiatorConfig.IF<*> -> factory.createInstance(config.random) as T
+            is InstantiatorConfig.NullableInstanceFactory<*> -> factory.createInstance(config.random) as T?
+            null -> alternative()
+        }
     }
 
     private fun <T : Any> createInstance(clazz: KClass<T>): T {
