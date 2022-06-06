@@ -112,6 +112,7 @@ Type | Support | Note and default behavior description
 `java.time.LocalDateTime` | ✅️ | randomly creates a `LocalDateTime` in a random `ZoneId`
 `java.time.LocalDate` | ✅️ | same as `LocalDateTime`
 `java.time.LocalTime` | ✅️ | same as `LocalDateTime`
+`java.time.ZonedDateTime` | ✅️ | same as `LocalDateTime`
 
 ## Configuration
 

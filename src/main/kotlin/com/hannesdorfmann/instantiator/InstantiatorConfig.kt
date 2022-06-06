@@ -5,6 +5,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Date
 import kotlin.experimental.and
 import kotlin.random.Random
@@ -107,6 +108,15 @@ private object LocalTimeInstanceFactory : InstantiatorConfig.NonNullableInstance
         LocalDateTimeInstanceFactory.createInstance(random).toLocalTime()
 }
 
+private object ZonedDateTimeInstanceFactory : InstantiatorConfig.NonNullableInstanceFactory<ZonedDateTime> {
+
+    override val type: KType = ZonedDateTime::class.createType()
+
+    override fun createInstance(random: Random): ZonedDateTime =
+        LocalDateTimeInstanceFactory.createInstance(random)
+            .atZone(ZoneId.of(ZoneId.getAvailableZoneIds().random(random)))
+}
+
 private val IntNullInstanceFactory = IntInstanceFactory.toNullableInstanceFactory()
 private val BooleanNullInstanceFactory = BooleanInstanceFactory.toNullableInstanceFactory()
 private val FloatNullInstanceFactory = FloatInstanceFactory.toNullableInstanceFactory()
@@ -121,6 +131,7 @@ private val InstantNullableInstanceFactory = InstantInstanceFactory.toNullableIn
 private val LocalDateTimeNullableInstanceFactory = LocalDateTimeInstanceFactory.toNullableInstanceFactory()
 private val LocalDateNullableInstanceFactory = LocalDateInstanceFactory.toNullableInstanceFactory()
 private val LocalTimeNullInstanceFactory = LocalTimeInstanceFactory.toNullableInstanceFactory()
+private val ZonedDateTimeNullInstanceFactory = ZonedDateTimeInstanceFactory.toNullableInstanceFactory()
 
 class InstantiatorConfig(
     val useDefaultArguments: Boolean = true,
@@ -172,7 +183,9 @@ class InstantiatorConfig(
             LocalDateInstanceFactory,
             LocalDateNullableInstanceFactory,
             LocalTimeInstanceFactory,
-            LocalTimeNullInstanceFactory
+            LocalTimeNullInstanceFactory,
+            ZonedDateTimeInstanceFactory,
+            ZonedDateTimeNullInstanceFactory
         )
     }
 
