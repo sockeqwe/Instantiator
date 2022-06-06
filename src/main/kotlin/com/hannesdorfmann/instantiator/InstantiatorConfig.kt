@@ -1,6 +1,7 @@
 package com.hannesdorfmann.instantiator
 
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Date
@@ -73,7 +74,8 @@ private object InstantInstanceFactory : InstantiatorConfig.NonNullableInstanceFa
 
     override val type: KType = Instant::class.createType()
 
-    override fun createInstance(random: Random): Instant = Instant.ofEpochMilli(random.nextLong())
+    override fun createInstance(random: Random): Instant =
+        Instant.ofEpochMilli(random.nextLong(4102441200000)) // 2100-01-01
 }
 
 
@@ -83,9 +85,17 @@ private object LocalDateTimeInstanceFactory : InstantiatorConfig.NonNullableInst
 
     override fun createInstance(random: Random): LocalDateTime =
         LocalDateTime.ofInstant(
-            Instant.ofEpochMilli(random.nextLong()),
+            InstantInstanceFactory.createInstance(random),
             ZoneId.of(ZoneId.getAvailableZoneIds().random(random))
         )
+}
+
+private object LocalDateInstanceFactory : InstantiatorConfig.NonNullableInstanceFactory<LocalDate> {
+
+    override val type: KType = LocalDate::class.createType()
+
+    override fun createInstance(random: Random): LocalDate =
+        LocalDateTimeInstanceFactory.createInstance(random).toLocalDate()
 }
 
 private val IntNullInstanceFactory = IntInstanceFactory.toNullableInstanceFactory()
@@ -100,6 +110,7 @@ private val CharNullInstanceFactory = CharInstanceFactory.toNullableInstanceFact
 private val DateNullInstanceFactory = DateInstanceFactory.toNullableInstanceFactory()
 private val InstantNullableInstanceFactory = InstantInstanceFactory.toNullableInstanceFactory()
 private val LocalDateTimeNullableInstanceFactory = LocalDateTimeInstanceFactory.toNullableInstanceFactory()
+private val LocalDateNullableInstanceFactory = LocalDateInstanceFactory.toNullableInstanceFactory()
 
 class InstantiatorConfig(
     val useDefaultArguments: Boolean = true,
@@ -147,7 +158,9 @@ class InstantiatorConfig(
             InstantInstanceFactory,
             InstantNullableInstanceFactory,
             LocalDateTimeInstanceFactory,
-            LocalDateTimeNullableInstanceFactory
+            LocalDateTimeNullableInstanceFactory,
+            LocalDateInstanceFactory,
+            LocalDateNullableInstanceFactory
         )
     }
 
