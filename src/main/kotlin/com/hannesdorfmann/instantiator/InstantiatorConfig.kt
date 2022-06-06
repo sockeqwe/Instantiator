@@ -179,7 +179,7 @@ class InstantiatorConfig(
         factories = (this.instanceFactory.values + factories).toTypedArray()
     )
 
-    operator fun <T : Any> plus(factory: InstanceFactory): InstantiatorConfig = add(factory)
+    operator fun plus(factory: InstanceFactory): InstantiatorConfig = add(factory)
 
 
     companion object {
