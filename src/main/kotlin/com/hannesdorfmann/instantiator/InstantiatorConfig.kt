@@ -127,6 +127,14 @@ private object OffsetDateTimeInstanceFactory : InstantiatorConfig.NonNullableIns
         )
 }
 
+private object OffsetTimeInstanceFactory : InstantiatorConfig.NonNullableInstanceFactory<OffsetTime> {
+
+    override val type: KType = OffsetTime::class.createType()
+
+    override fun createInstance(random: Random): OffsetTime =
+        OffsetDateTimeInstanceFactory.createInstance(random).toOffsetTime()
+}
+
 private val IntNullInstanceFactory = IntInstanceFactory.toNullableInstanceFactory()
 private val BooleanNullInstanceFactory = BooleanInstanceFactory.toNullableInstanceFactory()
 private val FloatNullInstanceFactory = FloatInstanceFactory.toNullableInstanceFactory()
@@ -143,6 +151,7 @@ private val LocalDateNullableInstanceFactory = LocalDateInstanceFactory.toNullab
 private val LocalTimeNullInstanceFactory = LocalTimeInstanceFactory.toNullableInstanceFactory()
 private val ZonedDateTimeNullInstanceFactory = ZonedDateTimeInstanceFactory.toNullableInstanceFactory()
 private val OffsetDateTimeNullInstanceFactory = OffsetDateTimeInstanceFactory.toNullableInstanceFactory()
+private val OffsetTimeNullInstanceFactory = OffsetTimeInstanceFactory.toNullableInstanceFactory()
 
 class InstantiatorConfig(
     val useDefaultArguments: Boolean = true,
@@ -198,7 +207,9 @@ class InstantiatorConfig(
             ZonedDateTimeInstanceFactory,
             ZonedDateTimeNullInstanceFactory,
             OffsetDateTimeInstanceFactory,
-            OffsetDateTimeNullInstanceFactory
+            OffsetDateTimeNullInstanceFactory,
+            OffsetTimeInstanceFactory,
+            OffsetTimeNullInstanceFactory
         )
     }
 

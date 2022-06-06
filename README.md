@@ -114,6 +114,7 @@ Type | Support | Note and default behavior description
 `java.time.LocalTime` | ✅️ | same as `LocalDateTime`
 `java.time.ZonedDateTime` | ✅️ | same as `LocalDateTime`
 `java.time.OffsetDateTime` | ✅️ | same as `LocalDateTime`
+`java.time.OffsetTime` | ✅️ | same as `LocalDateTime`
 
 ## Configuration
 
