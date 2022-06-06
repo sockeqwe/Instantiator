@@ -127,7 +127,7 @@ class Instantiator(private val config: InstantiatorConfig) {
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> fromInstanceFactoryIfAvailbaleOtherwise(type: KType, alternative: () -> T?): T? {
         return when (val factory = config.instanceFactory[type]) {
-            is InstantiatorConfig.IF<*> -> factory.createInstance(config.random) as T
+            is InstantiatorConfig.NonNullableInstanceFactory<*> -> factory.createInstance(config.random) as T
             is InstantiatorConfig.NullableInstanceFactory<*> -> factory.createInstance(config.random) as T?
             null -> alternative()
         }

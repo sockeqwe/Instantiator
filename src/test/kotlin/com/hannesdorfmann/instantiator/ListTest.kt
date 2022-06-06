@@ -59,6 +59,19 @@ class ListTest {
         println(x)
     }
 
+    @Test fun `generate list containing null values is supported by build in InstanceFactories`(){
+        val config = InstantiatorConfig(useNull = false)
+        println(instance<List<Int?>>(config))
+        println(instance<List<Long?>>(config))
+        println(instance<List<String?>>(config))
+        println(instance<List<Double?>>(config))
+        println(instance<List<Char?>>(config))
+        println(instance<List<Float?>>(config))
+        println(instance<List<Byte?>>(config))
+        println(instance<List<Boolean?>>(config))
+        println(instance<List<Short?>>(config))
+    }
+
     data class ClassWithListParam(val i : Int, val ints : List<Int>, val items : List<Item>)
     data class ClassWithMutableListParam(val i : Int, val ints : MutableList<Int>, val items : MutableList<Item>)
     data class ClassWithNullListParam(val list: List<Item>?, val mutableList : MutableList<Item>?)

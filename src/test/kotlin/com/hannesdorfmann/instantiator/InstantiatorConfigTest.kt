@@ -1,8 +1,7 @@
 package com.hannesdorfmann.instantiator
 
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import kotlin.random.Random
 import kotlin.reflect.KType
@@ -47,7 +46,7 @@ class InstantiatorConfigTest {
     @Test
     fun `add() InstanceFactory overrides existing factory and produces a new InstanceConfig instance`() {
         val customString = "String was produced by custom InstanceFactory"
-        val customStringInstanceFactory = object : InstantiatorConfig.IF<String> {
+        val customStringInstanceFactory = object : InstantiatorConfig.NonNullableInstanceFactory<String> {
             override val type: KType = String::class.createType()
             override fun createInstance(random: Random): String = customString
         }
@@ -65,7 +64,7 @@ class InstantiatorConfigTest {
     fun `add() creates a new InstanceFactory and produces a new InstanceConfig instance`() {
 
         val interfaceInstance = object : TestInterface {}
-        val customStringInstanceFactory = object : InstantiatorConfig.IF<TestInterface> {
+        val customStringInstanceFactory = object : InstantiatorConfig.NonNullableInstanceFactory<TestInterface> {
             override val type: KType = TestInterface::class.createType()
             override fun createInstance(random: Random): TestInterface = interfaceInstance
         }
@@ -93,6 +92,57 @@ class InstantiatorConfigTest {
         val instance2 = instance<ClassWithAllOptionals>(config2)
 
         assertEquals(instance1, instance2)
+    }
+
+    @Test
+    fun `toNullableInstanceFactory() with mode=ALWAYS_NULL return always null`() {
+        val nullableIntFactory = IntFactory().toNullableInstanceFactory(
+            mode = ToNullableInstaceFactoryMode.ALWAYS_NULL
+        )
+
+        assertEquals(Int::class.createType(nullable = true), nullableIntFactory.type)
+        for (i in 0..100) {
+            assertNull(nullableIntFactory.createInstance(Random))
+        }
+    }
+
+    @Test
+    fun `toNullableInstanceFactory() with mode=NEVER_NULL return always not null value`() {
+        val nullableIntFactory = IntFactory().toNullableInstanceFactory(
+            mode = ToNullableInstaceFactoryMode.NEVER_NULL
+        )
+
+        assertEquals(Int::class.createType(nullable = true), nullableIntFactory.type)
+        for (i in 0..100) {
+            assertEquals(23, nullableIntFactory.createInstance(Random))
+        }
+    }
+
+    @Test
+    fun `toNullableInstanceFactory() with mode=RANDOM returns randomly null or non-null value`() {
+        val nullableIntFactory = IntFactory().toNullableInstanceFactory(
+            mode = ToNullableInstaceFactoryMode.RANDOM
+        )
+
+        assertEquals(Int::class.createType(nullable = true), nullableIntFactory.type)
+
+        // It is fair to assume that when create 1000 values randomly at least
+        // 1 should be null
+        // and 1 should be non-null (23)
+        val generatedValues = (0..1000).map {
+            nullableIntFactory.createInstance(Random)
+        }
+
+        assertTrue(generatedValues.contains(23))
+        assertTrue(generatedValues.contains(null))
+
+    }
+
+
+    private class IntFactory : InstantiatorConfig.NonNullableInstanceFactory<Int> {
+        override val type: KType = Int::class.createType()
+
+        override fun createInstance(random: Random): Int = 23
     }
 
     data class ClassWithAllOptionals(
