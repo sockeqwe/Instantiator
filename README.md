@@ -130,14 +130,18 @@ Some settings that you can set:
   be filled with random value. Default value of the default config is
   that `InstantiatorConfig.useDefaultArguments = true`.
 - `InstantiatorConfig.useNull`: Set it to `true` if for constructor parameters that can be `null`,
-  `null` is actually the value. for example, given `data class MyClass(val id : Int?)`, if `config.useNull = true`
-  then instance will look like `MyClass( id = null)`. If `config.useNull = false` then nullable parameters will have non
-  null values i.e. `MyClass ( id = 123)`. Default value of default config is `InstantiatorConfig.useNull = true`
-- `InstantiatorConfig.random`: By setting it to a seeded `Random` you can recreate objects between tests and environments.
-  For example by setting it to `Random(0)`
+  `null` is actually the value without even asking an `InstanceFactory` to create an instance. 
+  This is a shortcut that ensures always `null`, for example: given `data class MyClass(val id : Int?)`, if `config.useNull = true`
+  then instance will look like `MyClass( id = null)`. If `config.useNull = false` then `InstanceFactor` will be called 
+  to decide if a null or non-null value is returned. Default value of default config is `InstantiatorConfig.useNull = true`
+- `InstantiatorConfig.random`: This random is passed to all `InstanceFactories` and is used by them to randomly create
+  values. Pass a seeded `Random`, i.e. `Random(0)`, to ensure always the same random values are generated. 
 
-In case a constructor parameter is both, nullable and has a default value, then the default config uses the
-default value for the parameter. Example:
+As you see there are multiple configuration that impact value creation: `config.useDefaultArguments`, `config.useNull` and `InstanceFactory`.
+The order and priority internally in Instantiator is the following: 
+1. `config.useDefaultArguments = true` is used first. So if set to true, then default values are used.
+2. `config.useNull = true` is used as second. So if `useDefaultArguments = false` and `useNull = true` then all optional parameters are filled with `null`.
+3. `InstanceFactory` is used as last. So if `useDefaultArguments = false` and `useNull = false` then `InstanceFactory` for the given type then is asked to instantiate a value.
 
 ```kotlin
 class Foo(val i: Int? = 42)
@@ -149,21 +153,38 @@ println(foo.i) // prints 42
 
 ## Custom `InstanceFactory`
 
-`InstantiatorConfig` takes as a constructor parameter `vararg factories: InstanceFactory`. An `InstanceFactory` is used
-to create an instance in case an unsupported build-in type needs to be instantiated (see Supported use cases table above) or if
-you want to override how primitive types are instantiated.
+`InstantiatorConfig` takes as a constructor parameter `vararg factories: InstanceFactory`. 
+An `InstanceFactory` is used to create an instance in case an unsupported build-in type needs to be instantiated 
+(see supported types table above) or if you want to override how primitive types are instantiated.
+
+The way how Kotlin's reflection and type system work is that there is a difference between i.e `Int` and `Int?` (so null and non-null types).
+That is the reason why two different `InstanceFactory` exist:
+
+1. `interface NonNullableInstanceFactory<T> : InstanceFactory`: This factory returns a `non-null` value.
+2. `interface NullableInstanceFactory<T> : InstanceFactory`: This factory can return a `non-null` or `null` value. It's up to the instance factory to decide (i.e. by using the Random).
+
+
 
 ```kotlin
-class MyIntInstanceFactory : InstantiatorConfig.InstanceFactory<Int> {
+class MyIntInstanceFactory : InstantiatorConfig.NonNullableInstanceFactory<Int> {
     override val type: KType = Int::class.createType()
     override fun createInstance(random: Random): Int = 42
 }
 
-val config = InstantiatorConfig(MyIntInstanceFactory())
+class MyDateInstanceFactory : InstantiatorConfig.NullableInstanceFactory<Calendar> {
+  override val type: KType = Calendar::class.createType(nullable = true)
+  override fun createInstance(random: Random): Date? = if (random.nextBoolean()) null else Date()
+}
 
-val i = instance<Int>(config) // i == 42 and all other ints will be 42 when using this config
+data class Foo(val i : Int, val date : Date?)
+
+val config = InstantiatorConfig(useNull = false, MyIntInstanceFactory(), MyCalendarInstanceFactory())
+val foo = instance<Foo>(config)
+
+println(foo.i) // i == 42
+println(foo.date) // can be null or current Date 
 ```
 
 `InstantiatorConfig` is immutable. You can add an `InstanceFactory` with
-the `val newConfig : InstantiatorConfig = instantiatorConfig.add(myCustomFactoy)`
+the `val newConfig : InstantiatorConfig = existingInstantiatorConfig.add(myCustomFactoy)`
 
