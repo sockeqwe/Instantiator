@@ -1,11 +1,6 @@
 package com.hannesdorfmann.instantiator
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.*
 import java.util.Date
 import kotlin.experimental.and
 import kotlin.random.Random
@@ -117,6 +112,21 @@ private object ZonedDateTimeInstanceFactory : InstantiatorConfig.NonNullableInst
             .atZone(ZoneId.of(ZoneId.getAvailableZoneIds().random(random)))
 }
 
+private object OffsetDateTimeInstanceFactory : InstantiatorConfig.NonNullableInstanceFactory<OffsetDateTime> {
+
+    override val type: KType = OffsetDateTime::class.createType()
+
+    override fun createInstance(random: Random): OffsetDateTime =
+        LocalDateTimeInstanceFactory.createInstance(random).atOffset(
+            ZoneOffset.ofTotalSeconds(
+                random.nextInt(
+                    ZoneOffset.MIN.totalSeconds,
+                    ZoneOffset.MAX.totalSeconds
+                )
+            )
+        )
+}
+
 private val IntNullInstanceFactory = IntInstanceFactory.toNullableInstanceFactory()
 private val BooleanNullInstanceFactory = BooleanInstanceFactory.toNullableInstanceFactory()
 private val FloatNullInstanceFactory = FloatInstanceFactory.toNullableInstanceFactory()
@@ -132,6 +142,7 @@ private val LocalDateTimeNullableInstanceFactory = LocalDateTimeInstanceFactory.
 private val LocalDateNullableInstanceFactory = LocalDateInstanceFactory.toNullableInstanceFactory()
 private val LocalTimeNullInstanceFactory = LocalTimeInstanceFactory.toNullableInstanceFactory()
 private val ZonedDateTimeNullInstanceFactory = ZonedDateTimeInstanceFactory.toNullableInstanceFactory()
+private val OffsetDateTimeNullInstanceFactory = OffsetDateTimeInstanceFactory.toNullableInstanceFactory()
 
 class InstantiatorConfig(
     val useDefaultArguments: Boolean = true,
@@ -185,7 +196,9 @@ class InstantiatorConfig(
             LocalTimeInstanceFactory,
             LocalTimeNullInstanceFactory,
             ZonedDateTimeInstanceFactory,
-            ZonedDateTimeNullInstanceFactory
+            ZonedDateTimeNullInstanceFactory,
+            OffsetDateTimeInstanceFactory,
+            OffsetDateTimeNullInstanceFactory
         )
     }
 
