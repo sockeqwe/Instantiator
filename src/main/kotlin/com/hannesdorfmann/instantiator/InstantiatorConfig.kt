@@ -3,6 +3,7 @@ package com.hannesdorfmann.instantiator
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.util.Date
 import kotlin.experimental.and
@@ -98,6 +99,14 @@ private object LocalDateInstanceFactory : InstantiatorConfig.NonNullableInstance
         LocalDateTimeInstanceFactory.createInstance(random).toLocalDate()
 }
 
+private object LocalTimeInstanceFactory : InstantiatorConfig.NonNullableInstanceFactory<LocalTime> {
+
+    override val type: KType = LocalTime::class.createType()
+
+    override fun createInstance(random: Random): LocalTime =
+        LocalDateTimeInstanceFactory.createInstance(random).toLocalTime()
+}
+
 private val IntNullInstanceFactory = IntInstanceFactory.toNullableInstanceFactory()
 private val BooleanNullInstanceFactory = BooleanInstanceFactory.toNullableInstanceFactory()
 private val FloatNullInstanceFactory = FloatInstanceFactory.toNullableInstanceFactory()
@@ -111,6 +120,7 @@ private val DateNullInstanceFactory = DateInstanceFactory.toNullableInstanceFact
 private val InstantNullableInstanceFactory = InstantInstanceFactory.toNullableInstanceFactory()
 private val LocalDateTimeNullableInstanceFactory = LocalDateTimeInstanceFactory.toNullableInstanceFactory()
 private val LocalDateNullableInstanceFactory = LocalDateInstanceFactory.toNullableInstanceFactory()
+private val LocalTimeNullInstanceFactory = LocalTimeInstanceFactory.toNullableInstanceFactory()
 
 class InstantiatorConfig(
     val useDefaultArguments: Boolean = true,
@@ -160,7 +170,9 @@ class InstantiatorConfig(
             LocalDateTimeInstanceFactory,
             LocalDateTimeNullableInstanceFactory,
             LocalDateInstanceFactory,
-            LocalDateNullableInstanceFactory
+            LocalDateNullableInstanceFactory,
+            LocalTimeInstanceFactory,
+            LocalTimeNullInstanceFactory
         )
     }
 

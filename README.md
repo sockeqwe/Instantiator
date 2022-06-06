@@ -111,6 +111,7 @@ Type | Support | Note and default behavior description
 `java.time.Instant` | ✅️ | randomly creates a `Instant`
 `java.time.LocalDateTime` | ✅️ | randomly creates a `LocalDateTime` in a random `ZoneId`
 `java.time.LocalDate` | ✅️ | same as `LocalDateTime`
+`java.time.LocalTime` | ✅️ | same as `LocalDateTime`
 
 ## Configuration
 
