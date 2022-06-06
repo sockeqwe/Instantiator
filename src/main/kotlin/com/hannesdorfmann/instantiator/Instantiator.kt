@@ -162,7 +162,6 @@ class Instantiator(private val config: InstantiatorConfig) {
         }
 
         if (clazz.isSealed) {
-            // TODO random? Make it somehow configurable
             val subclasses = clazz.sealedSubclasses
             if (subclasses.isEmpty()) {
                 throw UnsupportedOperationException("Sealed classes without any concrete implementation is not supported. Therefore, cannot instantiate $clazz")
