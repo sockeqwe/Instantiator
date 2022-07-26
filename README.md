@@ -163,8 +163,6 @@ That is the reason why two different `InstanceFactory` exist:
 1. `interface NonNullableInstanceFactory<T> : InstanceFactory`: This factory returns a `non-null` value.
 2. `interface NullableInstanceFactory<T> : InstanceFactory`: This factory can return a `non-null` or `null` value. It's up to the instance factory to decide (i.e. by using the Random).
 
-
-
 ```kotlin
 class MyIntInstanceFactory : InstantiatorConfig.NonNullableInstanceFactory<Int> {
     override val type: KType = Int::class.createType()
@@ -185,6 +183,14 @@ println(foo.i) // i == 42
 println(foo.date) // can be null or current Date 
 ```
 
+**Please note that unless you explicitly need a very custom behavior for `null` values of a specific type 
+there is no need to create a subclass of `NullableInstanceFactory`.**
+Just create a `NonNullableInstanceFactory`, add it to your `InstantiatorConfig` and Instantiator does 
+automatically create a `NullableInstanceFactory` out of it under the hood 
+(uses `NonNullableInstanceFactory.toNullableInstanceFactory()`).
+
 `InstantiatorConfig` is immutable. You can add an `InstanceFactory` with
 the `val newConfig : InstantiatorConfig = existingInstantiatorConfig.add(myCustomFactoy)`
+
+
 

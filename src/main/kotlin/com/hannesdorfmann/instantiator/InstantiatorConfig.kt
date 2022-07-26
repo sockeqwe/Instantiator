@@ -160,7 +160,62 @@ class InstantiatorConfig(
     vararg factories: InstanceFactory = DEFAULT_INSTANCE_FACTORIES
 ) {
 
-    internal val instanceFactory: Map<KType, InstanceFactory> = factories.associateBy { it.type }
+    constructor(
+        vararg factories: InstanceFactory = DEFAULT_INSTANCE_FACTORIES
+    ) : this(useDefaultArguments = true, useNull = true, random = Random, factories = factories)
+
+    internal val instanceFactory: Map<KType, InstanceFactory>
+
+    init {
+        if (!factories.contentEquals(DEFAULT_INSTANCE_FACTORIES)) {
+            // SLOW TRACK: adding nullable factories automatically
+
+            // Identify which non-nullable factory HAS NO nullable factory counterpart (and vice versa)
+            val nullableFactories = mutableMapOf<KType, NullableInstanceFactory<*>>()
+            val nonNullableFactories = mutableMapOf<KType, NonNullableInstanceFactory<*>>()
+            for (factory in factories) {
+                if (factory.type.isMarkedNullable) {
+                    if (factory is NullableInstanceFactory<*>) {
+                        nullableFactories[factory.type] = factory
+                    } else {
+                        throw IllegalArgumentException(
+                            "A factory's type is marked as nullable but is not of type " +
+                                    "${NullableInstanceFactory::class.java}. Type = ${factory.type}. Factory = $factory"
+                        )
+
+                    }
+                } else {
+                    if (factory is NonNullableInstanceFactory<*>) {
+                        nonNullableFactories[factory.type] = factory
+                    } else {
+                        throw IllegalArgumentException(
+                            "A factory's type is marked as non-nullable but is not of type " +
+                                    "${NonNullableInstanceFactory::class.java}. Type = ${factory.type}. Factory = $factory"
+                        )
+                    }
+                }
+            }
+
+            // actually create factories
+            val factoriesToAdd = mutableListOf<InstanceFactory>()
+            for ((type, factory) in nonNullableFactories) {
+                val nullFactory = nullableFactories[type.withNullability(true)]
+                if (nullFactory == null) {
+                    // no null factory for this type passed in original factories
+                    factoriesToAdd.add(factory.toNullableInstanceFactory())
+                }
+            }
+
+            val allFactories: List<InstanceFactory> = factories.asList() + factoriesToAdd
+            instanceFactory = allFactories.associateBy { it.type }
+
+        } else {
+            // Fast track: It is factories === DEFAULT_INSTANCE_FACTORIES
+            // that means factories contains also a NullableInstanceFactory for each factory
+            instanceFactory = factories.associateBy { it.type }
+        }
+
+    }
 
     /**
      * Adds a copy of this [InstantiatorConfig] and then adds the [InstanceFactory] to the new config.
@@ -230,7 +285,7 @@ class InstantiatorConfig(
 /**
  * Used by [toNullableInstanceFactory]
  */
-enum class ToNullableInstaceFactoryMode {
+enum class ToNullableInstanceFactoryMode {
     /**
      * It randomly decides if value should be null or not
      */
@@ -259,16 +314,16 @@ enum class ToNullableInstaceFactoryMode {
  * It does so by delegating the true value creating to the original
  * [com.hannesdorfmann.instantiator.InstantiatorConfig.NonNullableInstanceFactory]
  */
-fun <T : Any> InstantiatorConfig.NonNullableInstanceFactory<T>.toNullableInstanceFactory(mode: ToNullableInstaceFactoryMode = ToNullableInstaceFactoryMode.RANDOM): InstantiatorConfig.NullableInstanceFactory<T> {
+fun <T : Any> InstantiatorConfig.NonNullableInstanceFactory<T>.toNullableInstanceFactory(mode: ToNullableInstanceFactoryMode = ToNullableInstanceFactoryMode.RANDOM): InstantiatorConfig.NullableInstanceFactory<T> {
     val self = this
 
     return object : InstantiatorConfig.NullableInstanceFactory<T> {
         override val type: KType = self.type.withNullability(true)
         override fun createInstance(random: Random): T? =
             when (mode) {
-                ToNullableInstaceFactoryMode.RANDOM -> if (random.nextBoolean()) self.createInstance(random) else null
-                ToNullableInstaceFactoryMode.ALWAYS_NULL -> null
-                ToNullableInstaceFactoryMode.NEVER_NULL -> self.createInstance(random)
+                ToNullableInstanceFactoryMode.RANDOM -> if (random.nextBoolean()) self.createInstance(random) else null
+                ToNullableInstanceFactoryMode.ALWAYS_NULL -> null
+                ToNullableInstanceFactoryMode.NEVER_NULL -> self.createInstance(random)
             }
     }
 }
